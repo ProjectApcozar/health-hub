@@ -4,6 +4,7 @@ import { mainnet, polygon, arbitrum, Chain, sepolia } from '@wagmi/core/chains';
 import { createAppKit, defaultWagmiConfig, AppKit } from '@reown/appkit-wagmi-react-native';
 import { Stack } from "expo-router";
 import { WagmiProvider, } from 'wagmi';
+import { AuthProvider } from '@/contexts/SessionContext';
 
 const queryClient = new QueryClient();
 
@@ -33,9 +34,11 @@ export default function RootLayout() {
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <Stack>
-          <Stack.Screen name="index" />
-        </Stack>
+        <AuthProvider>
+          <Stack>
+            <Stack.Screen name="index" />
+          </Stack>
+        </AuthProvider>
         <AppKit />
       </QueryClientProvider>
     </WagmiProvider>
