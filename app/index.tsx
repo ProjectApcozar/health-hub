@@ -1,22 +1,11 @@
-import { AppKitButton } from "@reown/appkit-wagmi-react-native";
-import { Text, View } from "react-native";
-import { useAccount, useReadContract } from "wagmi";
-import healthhubABI from "../abis/HealthHubABI.json";
-import { ContractAddres } from "@/constants/ContractAddress";
+import { ConnectButton } from "@reown/appkit-wagmi-react-native";
+import { View } from "react-native";
+import { useAccount } from "wagmi";
+import { Redirect } from "expo-router";
 
 export default function Index() {
 
-  const { address } = useAccount();
-
-  const { data, isSuccess, isError, error } = useReadContract({
-    abi: healthhubABI,
-    address: ContractAddres,
-    functionName: 'isPatient',
-    args: [address],
-    query: {
-      enabled: !!address,
-    },
-  });
+  const { isConnected } = useAccount();
 
   return (
     <View
@@ -26,9 +15,11 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <AppKitButton />
-      {isSuccess && <Text>Signature: {data?.toString()}</Text>}
-      {isError && <Text>Error: {error?.toString()}</Text>}
+      {!isConnected ? (
+        <ConnectButton label="Conecte" loadingLabel="Conectando"/>
+      ) : (
+        <Redirect href={"/(app)/home"} />
+      )}
     </View>
   );
 }

@@ -1,4 +1,4 @@
-[
+export const healthhubABI = [
     {
       "anonymous": false,
       "inputs": [
