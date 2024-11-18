@@ -7,7 +7,7 @@ import { WagmiProvider, } from 'wagmi';
 
 const queryClient = new QueryClient();
 
-const projectId = process.env.EXPO_PUBLIC_REOWN_PROJECT_ID as string;
+const projectId = "92b40333c199427e0a7997def4c48527";
 
 const metadata = {
   name: 'AppKit RN',
