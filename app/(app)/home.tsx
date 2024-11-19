@@ -5,6 +5,7 @@ import { healthhubABI } from "@/abis/HealthHubABI";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/contexts/SessionContext";
 import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Home() {
   const { setAddress, logout } = useAuth();
@@ -12,7 +13,6 @@ export default function Home() {
   
   const { disconnect } = useDisconnect();
   const router = useRouter();
-
 
   useEffect(() => {
     if (address) {
@@ -28,7 +28,20 @@ export default function Home() {
     router.replace("/");
   }
 
-  const { data, isSuccess, isError, error } = useReadContract({
+  const { isSuccess , isError, error, data } = useQuery({
+    queryKey: ['data'],
+    queryFn: () =>
+      fetch('http://192.168.1.129:3000/items', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }).then((res) =>
+        res.json(),
+      ),
+  });
+
+  const { data: contractData, isSuccess: isContractSuccess, isError: isContractError, error: contractError } = useReadContract({
     abi: healthhubABI,
     address: ContractAddres,
     functionName: 'isPatient',
@@ -47,7 +60,9 @@ export default function Home() {
       }}
     >
       <Text style={styles.text}>Your wallet is connected:{address}</Text>
-      {isSuccess && <Text style={styles.text}>Signature: {data?.toString()}</Text>}
+      {isContractSuccess && <Text style={styles.text}>Signature: {contractData?.toString()}</Text>}
+      {isContractError && <Text style={styles.error}>Error: {contractError?.toString()}</Text>}
+      {isSuccess && <Text style={styles.text}>Data: {data?.[0]?.value ? JSON.stringify(data[0].value) : "No data"}</Text>}
       {isError && <Text style={styles.error}>Error: {error?.toString()}</Text>}
       <Button title="Disconnect" onPress={() => handleDisconntect()} />
     </View>

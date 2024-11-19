@@ -11,12 +11,12 @@ const queryClient = new QueryClient();
 const projectId = "92b40333c199427e0a7997def4c48527";
 
 const metadata = {
-  name: 'AppKit RN',
+  name: 'Health Hub',
   description: 'Appkit RN Example',
-  url: 'https://reown.com/appkit',
+  url: 'https://192.168.1.129:8081',
   icons: ['https://avatars.githubusercontent.com/u/179229932'],
   redirect: {
-    native: '',
+    native: 'health-hub://',
     universal: '',
   },
 };
