@@ -1,65 +1,101 @@
-import { Button, StyleSheet, Text, View } from "react-native";
-import { useAccount, useDisconnect, useReadContract } from "wagmi";
-import { ContractAddres } from "@/constants/ContractAddress";
-import { healthhubABI } from "@/abis/HealthHubABI";
-import { useRouter } from "expo-router";
+import React from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+} from "react-native-reanimated";
 
-export default function Home() {
+const { width, height } = Dimensions.get("window"); // Obtenemos el tamaño de la pantalla
 
-  const { address } = useAccount();
-  const { disconnect } = useDisconnect();
-  const router = useRouter(); // Hook para manejar la navegación
+const RadialMenu = () => {
+  // Radio dinámico en función del ancho o alto (el menor de los dos)
+  const radius = Math.min(width, height) * 0.3; // 30% del lado más corto
+  const angles = [30, 90, 150, 210, 270, 330];
+  const items = ["A", "B", "C", "D", "E", "F"];
 
-  const handleDisconntect = () => {
-    disconnect();
-    router.push("/");
-  }
-
-  const { data, isSuccess, isError, error } = useReadContract({
-    abi: healthhubABI,
-    address: ContractAddres,
-    functionName: 'isPatient',
-    args: [address],
-    query: {
-      enabled: !!address,
-    },
+  // Calcular posiciones iniciales de los botones
+  const menuPositions = angles.map((angle) => {
+    const rad = (angle * Math.PI) / 180;
+    return {
+      x: useSharedValue(Math.cos(rad) * radius),
+      y: useSharedValue(Math.sin(rad) * radius),
+    };
   });
 
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text style={styles.text}>Your wallet is connected:{address}</Text>
-      {isSuccess && <Text style={styles.text}>Signature: {data?.toString()}</Text>}
-      {isError && <Text style={styles.error}>Error: {error?.toString()}</Text>}
-      <Button title="Disconnect" onPress={() => handleDisconntect()} />
+    <View style={styles.container}>
+      {items.map((item, index) => {
+        const animatedStyle = useAnimatedStyle(() => ({
+          transform: [
+            { translateX: menuPositions[index].x.value },
+            { translateY: menuPositions[index].y.value },
+          ],
+        }));
+
+        return (
+          <Animated.View key={index} style={[styles.menuItem, animatedStyle]}>
+            <TouchableOpacity style={[styles.itemButton]}>
+              <Text style={styles.itemText}>{item}</Text>
+            </TouchableOpacity>
+          </Animated.View>
+        );
+      })}
+
+      <TouchableOpacity style={styles.centerButton}>
+        <Text style={styles.centerText}>Menu</Text>
+      </TouchableOpacity>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
-    padding: 20,
+    justifyContent: "center",
+    backgroundColor: "#FFFFFF",
   },
-  text: {
-    fontSize: 16,
-    marginBottom: 10,
+  menuItem: {
+    position: "absolute",
   },
-  address: {
-    fontSize: 14,
-    marginBottom: 10,
-    color: "blue",
+  itemButton: {
+    // Botones escalables según el ancho o alto de la pantalla
+    width: Math.min(width, height) * 0.25, // 12% del lado más corto
+    height: Math.min(width, height) * 0.25,
+    borderRadius: Math.min(width, height) * 0.25,
+    backgroundColor: "#62CCC782",
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
   },
-  error: {
-    color: "red",
-    fontSize: 14,
-    marginBottom: 10,
+  itemText: {
+    color: "#fff",
+    fontSize: Math.min(width, height) * 0.035, // Escalado dinámico
+  },
+  centerButton: {
+    // Botón central escalable
+    width: Math.min(width, height) * 0.25, // 18% del lado más corto
+    height: Math.min(width, height) * 0.25,
+    borderRadius: Math.min(width, height) * 0.25,
+    backgroundColor: "#62CCC7",
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 5,
+  },
+  centerText: {
+    color: "#fff",
+    fontSize: Math.min(width, height) * 0.04, // Escalado dinámico
+    fontWeight: "bold",
   },
 });
+
+export default RadialMenu;

@@ -1,21 +1,22 @@
 import '@walletconnect/react-native-compat'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { mainnet, polygon, arbitrum, Chain, sepolia } from '@wagmi/core/chains';
+import { mainnet, polygon, arbitrum, sepolia } from '@wagmi/core/chains';
 import { createAppKit, defaultWagmiConfig, AppKit } from '@reown/appkit-wagmi-react-native';
 import { Stack } from "expo-router";
 import { WagmiProvider, } from 'wagmi';
+import { AuthProvider } from '@/contexts/SessionContext';
 
 const queryClient = new QueryClient();
 
-const projectId = "92b40333c199427e0a7997def4c48527";
+const projectId = process.env.EXPO_PUBLIC_PROJECT_ID as string;
 
 const metadata = {
-  name: 'AppKit RN',
+  name: 'Health Hub',
   description: 'Appkit RN Example',
-  url: 'https://reown.com/appkit',
+  url: 'https://192.168.1.129:8081',
   icons: ['https://avatars.githubusercontent.com/u/179229932'],
   redirect: {
-    native: '',
+    native: 'health-hub://',
     universal: '',
   },
 };
@@ -33,9 +34,11 @@ export default function RootLayout() {
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <Stack>
-          <Stack.Screen name="index" />
-        </Stack>
+        <AuthProvider>
+          <Stack>
+            <Stack.Screen name="index" />
+          </Stack>
+        </AuthProvider>
         <AppKit />
       </QueryClientProvider>
     </WagmiProvider>
