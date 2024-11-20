@@ -1,6 +1,6 @@
 import '@walletconnect/react-native-compat'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { mainnet, polygon, arbitrum, Chain, sepolia } from '@wagmi/core/chains';
+import { mainnet, polygon, arbitrum, sepolia } from '@wagmi/core/chains';
 import { createAppKit, defaultWagmiConfig, AppKit } from '@reown/appkit-wagmi-react-native';
 import { Stack } from "expo-router";
 import { WagmiProvider, } from 'wagmi';
@@ -8,7 +8,7 @@ import { AuthProvider } from '@/contexts/SessionContext';
 
 const queryClient = new QueryClient();
 
-const projectId = "92b40333c199427e0a7997def4c48527";
+const projectId = process.env.EXPO_PUBLIC_PROJECT_ID as string;
 
 const metadata = {
   name: 'Health Hub',
