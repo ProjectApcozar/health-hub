@@ -3,29 +3,18 @@ import { useAccount, useDisconnect, useReadContract } from "wagmi";
 import { ContractAddres } from "@/constants/ContractAddress";
 import { healthhubABI } from "@/abis/HealthHubABI";
 import { useRouter } from "expo-router";
-import { useAuth } from "@/contexts/SessionContext";
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 export default function Home() {
-  const { setAddress, logout } = useAuth();
   const { address } = useAccount();
   
   const { disconnect } = useDisconnect();
   const router = useRouter();
 
-  useEffect(() => {
-    if (address) {
-      setAddress(address);
-    } else {
-      router.replace("/");
-    }
-  }, [address, setAddress]);
-
   const handleDisconntect = () => {
     disconnect();
-    logout();
-    router.replace("/");
+    router.replace("/login");
   }
 
   const { isSuccess , isError, error, data } = useQuery({
