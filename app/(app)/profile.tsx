@@ -1,6 +1,6 @@
 import { Button, StyleSheet, Text, View } from "react-native";
 import { useAccount, useDisconnect, useReadContract } from "wagmi";
-import { ContractAddres } from "@/constants/ContractAddress";
+import { contractAddress } from "@/constants/ContractAddress";
 import { healthhubABI } from "@/abis/HealthHubABI";
 import { useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
@@ -15,11 +15,13 @@ export default function Profile() {
     disconnect();
     router.replace("/login");
   }
+  const baseURL = process.env.EXPO_PUBLIC_API_URL as string;
+  const URL = `${baseURL}/items`;
 
   const { isSuccess , isError, error, data } = useQuery({
     queryKey: ['data'],
     queryFn: () =>
-      fetch('http://192.168.1.129:3000/items', {
+      fetch(URL, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -31,7 +33,7 @@ export default function Profile() {
 
   const { data: contractData, isSuccess: isContractSuccess, isError: isContractError, error: contractError } = useReadContract({
     abi: healthhubABI,
-    address: ContractAddres,
+    address: contractAddress,
     functionName: 'isPatient',
     args: [address],
     query: {

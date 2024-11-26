@@ -1,6 +1,6 @@
 import { healthhubABI } from '@/abis/HealthHubABI';
 import { registerUser } from '@/api/registerUser';
-import { ContractAddres } from '@/constants/ContractAddress';
+import { contractAddress } from '@/constants/ContractAddress';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
@@ -31,13 +31,12 @@ const Register: React.FC = () => {
 
   const onSubmit: SubmitHandler<User> = async (data) => {
     await registerUser(data);
-    const test = await writeContract({
+    await writeContract({
       abi: healthhubABI,
-      address: ContractAddres,
+      address: contractAddress,
       functionName: 'registerPatient',
       account: address
     });
-    //console.log(test);
     router.replace("/");
   };
 
