@@ -3,18 +3,23 @@ import { View } from "react-native";
 import { Redirect, useRouter } from "expo-router";
 import { useAccount } from "wagmi";
 import { useEffect } from "react";
+import { useIsPatient } from "@/hooks/useIsPatient";
 
 export default function Login() {
 
-  const { isConnected } = useAccount();
-
+  const { isConnected, address } = useAccount();
+  const { isPatient } = useIsPatient(address || null);
   const router = useRouter();
 
   useEffect(() => {
-    if (isConnected) {
-      router.replace("/");
-    }
-  }, [ isConnected ]);
+    
+    if (!isConnected) return;
+
+    console.log(isPatient);
+    if (isPatient) router.replace("/");
+    else router.replace("/register");
+
+  }, [ isConnected, isPatient ]);
 
   return (
     <View

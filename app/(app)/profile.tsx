@@ -3,7 +3,6 @@ import { useAccount, useDisconnect, useReadContract } from "wagmi";
 import { ContractAddres } from "@/constants/ContractAddress";
 import { healthhubABI } from "@/abis/HealthHubABI";
 import { useRouter } from "expo-router";
-import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 export default function Profile() {

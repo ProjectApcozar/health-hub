@@ -5,11 +5,17 @@ import { healthhubABI } from "@/abis/HealthHubABI";
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useIsPatient } from "@/hooks/useIsPatient";
 
 export default function Home() {
   const { address } = useAccount();
-  
   const { disconnect } = useDisconnect();
+  const  {
+    isPatient, 
+    isSuccess: isContractSuccess, 
+    error: contractError, 
+    isError: isContractError 
+  } = useIsPatient(address || null);
   const router = useRouter();
 
   const handleDisconntect = () => {
@@ -20,7 +26,7 @@ export default function Home() {
   const { isSuccess , isError, error, data } = useQuery({
     queryKey: ['data'],
     queryFn: () =>
-      fetch('http://192.168.1.129:3000/items', {
+      fetch('http://192.168.1.180:3000/items', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -30,15 +36,7 @@ export default function Home() {
       ),
   });
 
-  const { data: contractData, isSuccess: isContractSuccess, isError: isContractError, error: contractError } = useReadContract({
-    abi: healthhubABI,
-    address: ContractAddres,
-    functionName: 'isPatient',
-    args: [address],
-    query: {
-      enabled: !!address,
-    },
-  });
+
 
   return (
     <View
@@ -49,7 +47,7 @@ export default function Home() {
       }}
     >
       <Text style={styles.text}>Your wallet is connected:{address}</Text>
-      {isContractSuccess && <Text style={styles.text}>Signature: {contractData?.toString()}</Text>}
+      {isContractSuccess && <Text style={styles.text}>Signature: {isPatient}</Text>}
       {isContractError && <Text style={styles.error}>Error: {contractError?.toString()}</Text>}
       {isSuccess && <Text style={styles.text}>Data: {data?.[0]?.value ? JSON.stringify(data[0].value) : "No data"}</Text>}
       {isError && <Text style={styles.error}>Error: {error?.toString()}</Text>}
