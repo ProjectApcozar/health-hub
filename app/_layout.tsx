@@ -14,10 +14,6 @@ const metadata = {
   description: 'Appkit RN Example',
   url: 'https://reown.com/appkit',
   icons: ['https://avatars.githubusercontent.com/u/179229932'],
-  redirect: {
-    native: 'health-hub://',
-    universal: '',
-  },
 };
 
 const chains = [mainnet, polygon, arbitrum, sepolia] as const;
