@@ -1,5 +1,5 @@
 import { healthhubABI } from '@/abis/HealthHubABI';
-import { registerUser } from '@/api/registerUser';
+import { registerUser } from '@/api/userAPI';
 import { contractAddress } from '@/constants/ContractAddress';
 import { useRouter } from 'expo-router';
 import React from 'react';
