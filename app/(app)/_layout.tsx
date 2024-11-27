@@ -1,4 +1,3 @@
-import { Text } from 'react-native';
 import { Redirect, Stack } from 'expo-router';
 import { useAccount } from 'wagmi';
 
@@ -10,5 +9,12 @@ export default function AppLayout() {
     return <Redirect href="/login" />;
   }
 
-  return <Stack />;
+  return(
+  <Stack
+    screenOptions={{
+      headerShown: false,
+      animation: "ios_from_left",
+    }}
+  />
+  );
 }

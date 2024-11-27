@@ -1,18 +1,10 @@
-<<<<<<< Updated upstream
-import { Button, StyleSheet, Text, View } from "react-native";
-import { useAccount, useDisconnect, useReadContract } from "wagmi";
-import { ContractAddres } from "@/constants/ContractAddress";
-import { healthhubABI } from "@/abis/HealthHubABI";
-import { useRouter } from "expo-router";
-import { useQuery } from "@tanstack/react-query";
-=======
 import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useAccount, useDisconnect } from "wagmi";
 import { useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { Ionicons } from "@expo/vector-icons";
 import { useIsPatient } from "@/hooks/useIsPatient";
->>>>>>> Stashed changes
+import { Ionicons } from "@expo/vector-icons";
 
 export default function Profile() {
   const { address } = useAccount();
@@ -48,32 +40,6 @@ export default function Profile() {
       ),
   });
 
-<<<<<<< Updated upstream
-  const { data: contractData, isSuccess: isContractSuccess, isError: isContractError, error: contractError } = useReadContract({
-    abi: healthhubABI,
-    address: ContractAddres,
-    functionName: 'isPatient',
-    args: [address],
-    query: {
-      enabled: !!address,
-    },
-  });
-
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text style={styles.text}>Your wallet is connected:{address}</Text>
-      {isContractSuccess && <Text style={styles.text}>Signature: {contractData?.toString()}</Text>}
-      {isContractError && <Text style={styles.error}>Error: {contractError?.toString()}</Text>}
-      {isSuccess && <Text style={styles.text}>Data: {data?.[0]?.value ? JSON.stringify(data[0].value) : "No data"}</Text>}
-      {isError && <Text style={styles.error}>Error: {error?.toString()}</Text>}
-      <Button title="Disconnect" onPress={() => handleDisconntect()} />
-=======
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -96,13 +62,30 @@ export default function Profile() {
         {isError && <Text style={styles.error}>Error: {error?.toString()}</Text>}
         <Button title="Disconnect" onPress={() => handleDisconntect()} />
       </View>
->>>>>>> Stashed changes
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    backgroundColor: "#f5f5f5",
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+    backgroundColor: "#62CCC7",
+  },
+  backButton: {
+    marginRight: 10,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#fff",
+  },
+  content: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",

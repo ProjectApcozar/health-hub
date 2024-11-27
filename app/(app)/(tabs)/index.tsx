@@ -39,7 +39,7 @@ export default function RadialMenu() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Link href={"/profile"} replace asChild>
+        <Link href={"/profile"} asChild>
           <TouchableOpacity
             style={styles.profileButton}
           >

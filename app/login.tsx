@@ -8,17 +8,17 @@ import { useIsPatient } from "@/hooks/useIsPatient";
 export default function Login() {
 
   const { isConnected, address } = useAccount();
-  const { isPatient } = useIsPatient(address || null);
+  const { isPatient, isLoading } = useIsPatient(address || null);
   const router = useRouter();
 
   useEffect(() => {
     
-    if (!isConnected) return;
+    if (!isConnected || isLoading) return;
 
     if (isPatient) router.replace("/");
     else router.replace("/register");
 
-  }, [ isConnected, isPatient ]);
+  }, [ isConnected, isPatient, isLoading ]);
 
   return (
     <View
