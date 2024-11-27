@@ -2,7 +2,6 @@ import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useAccount, useDisconnect } from "wagmi";
 import { useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
-import { Ionicons } from "@expo/vector-icons";
 import { useIsPatient } from "@/hooks/useIsPatient";
 import { Ionicons } from "@expo/vector-icons";
 
