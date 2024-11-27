@@ -6,7 +6,6 @@ import {
   StyleSheet,
   Dimensions,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import Animated, {
   useSharedValue,
@@ -17,12 +16,17 @@ import { Link } from "expo-router";
 const { width, height } = Dimensions.get("window");
 
 export default function RadialMenu() {
-  const navigation = useNavigation(); // Hook para navegar
 
-  // Configuración del menú radial
   const radius = Math.min(width, height) * 0.3;
   const angles = [30, 90, 150, 210, 270, 330];
-  const items = ["A", "B", "C", "D", "E", "F"];
+  const items = [
+    "Pruebas Analíticas",
+    "Pruebas de Imagen", 
+    "Vacunas", 
+    "Incapacidad temportal", 
+    "Medicación", 
+    "Informes Clínicos"
+  ];
 
   const menuPositions = angles.map((angle) => {
     const rad = (angle * Math.PI) / 180;
@@ -68,7 +72,7 @@ export default function RadialMenu() {
           );
         })}
         <TouchableOpacity style={styles.centerButton}>
-          <Text style={styles.centerText}>Menu</Text>
+          <Text style={styles.centerText}>Datos Médicos</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -130,7 +134,8 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
   },
   itemText: {
-    color: "#fff",
+    color: "#000",
+    textAlign: "center",
     fontSize: Math.min(width, height) * 0.035,
   },
   centerButton: {
@@ -143,8 +148,9 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   centerText: {
-    color: "#fff",
+    color: "#000",
     fontSize: Math.min(width, height) * 0.04,
     fontWeight: "bold",
+    textAlign: "center",
   },
 });

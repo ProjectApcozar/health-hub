@@ -1,6 +1,6 @@
-import { ConnectButton, useAppKit } from "@reown/appkit-wagmi-react-native";
+import { ConnectButton } from "@reown/appkit-wagmi-react-native";
 import { View } from "react-native";
-import { Redirect, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useAccount } from "wagmi";
 import { useEffect } from "react";
 import { useIsPatient } from "@/hooks/useIsPatient";
@@ -15,7 +15,6 @@ export default function Login() {
     
     if (!isConnected) return;
 
-    console.log(isPatient);
     if (isPatient) router.replace("/");
     else router.replace("/register");
 

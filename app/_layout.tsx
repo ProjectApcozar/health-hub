@@ -1,4 +1,5 @@
-import '@walletconnect/react-native-compat'
+import '@walletconnect/react-native-compat';
+
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { mainnet, polygon, arbitrum, sepolia } from '@wagmi/core/chains';
 import { createAppKit, defaultWagmiConfig, AppKit } from '@reown/appkit-wagmi-react-native';
