@@ -37,7 +37,7 @@ export default function Home() {
       }}
     >
       <Text style={styles.text}>Your wallet is connected:{address}</Text>
-      {isContractSuccess && <Text style={styles.text}>Signature: {isPatient.toString()}</Text>}
+      {isContractSuccess && <Text style={styles.text}>Is Patient: {isPatient.toString()}</Text>}
       {isContractError && <Text style={styles.error}>Error: {contractError?.toString()}</Text>}
       {isSuccess && <Text style={styles.text}>User: {JSON.stringify(user)}</Text>}
       {isError && <Text style={styles.error}>Error: {error?.toString()}</Text>}

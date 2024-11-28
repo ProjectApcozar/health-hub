@@ -12,11 +12,18 @@ import Animated, {
   useAnimatedStyle,
 } from "react-native-reanimated";
 import { Link } from "expo-router";
+import { useGetUserByAddress } from "@/hooks/useGetUserByAddress";
+import { useAccount } from "wagmi";
 
 const { width, height } = Dimensions.get("window");
 
 export default function RadialMenu() {
+  const { address } = useAccount();
 
+  const {
+    user
+  } = useGetUserByAddress(address || null);
+  
   const radius = Math.min(width, height) * 0.3;
   const angles = [30, 90, 150, 210, 270, 330];
   const items = [
@@ -46,7 +53,7 @@ export default function RadialMenu() {
             <Text style={styles.profileText}>AP</Text>
           </TouchableOpacity>
         </Link>
-        <Text style={styles.greetingText}>Hola Angel</Text>
+        <Text style={styles.greetingText}>{`Hola ${user?.nombre}`}</Text>
         <TouchableOpacity
           style={styles.notificationButton}
           onPress={() => alert("No tienes nuevas notificaciones")}

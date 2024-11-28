@@ -1,5 +1,5 @@
 import { ConnectButton } from "@reown/appkit-wagmi-react-native";
-import { View } from "react-native";
+import { Image, Text, View, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { useAccount } from "wagmi";
 import { useEffect } from "react";
@@ -21,14 +21,49 @@ export default function Login() {
   }, [ isConnected, isPatient, isLoading ]);
 
   return (
+
     <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
+      style={styles.container}
     >
-      <ConnectButton label="Conecte" loadingLabel="Conectando"/>
+      <View style={styles.header}>
+        <Image
+          source={require('@/assets/images/hh-logo.png')}
+          style={styles.logo}
+        />
+        <Text style={styles.title}>Inicio de Sesión</Text>
+      </View>
+      <ConnectButton 
+        label="Conecte su wallet" 
+        loadingLabel="Conectando"
+        style={styles.connectButton}
+      />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
+  },
+  header: {
+    alignItems: "center",
+    marginBottom: 30,
+  },
+  logo: {
+    width: 80,
+    height: 80,
+    marginBottom: 10,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  connectButton: {
+    backgroundColor: "#62CCC7",
+    paddingHorizontal: 20,
+  },
+});
