@@ -1,14 +1,16 @@
 import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useAccount, useDisconnect } from "wagmi";
 import { useRouter } from "expo-router";
-import { useQuery } from "@tanstack/react-query";
 import { useIsPatient } from "@/hooks/useIsPatient";
 import { Ionicons } from "@expo/vector-icons";
+import { useGetUserByAddress } from "@/hooks/useGetUserByAddress";
 
 export default function Profile() {
+  const router = useRouter();
+
   const { address } = useAccount();
-  
   const { disconnect } = useDisconnect();
+
   const  {
     isPatient, 
     isSuccess: isContractSuccess, 
@@ -16,28 +18,17 @@ export default function Profile() {
     isError: isContractError 
   } = useIsPatient(address || null);
   
-  const router = useRouter();
+  const {
+    user,
+    isSuccess,
+    isError,
+    error
+  } = useGetUserByAddress(address || null);
 
   const handleDisconntect = () => {
     disconnect();
     router.replace("/login");
   }
-
-  const baseURL = process.env.EXPO_PUBLIC_API_URL as string;
-  const URL =`${baseURL}/items`;
-
-  const { isSuccess , isError, error, data } = useQuery({
-    queryKey: ['data'],
-    queryFn: () =>
-      fetch(URL, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }).then((res) =>
-        res.json(),
-      ),
-  });
 
   return (
     <View style={styles.container}>
@@ -57,7 +48,7 @@ export default function Profile() {
         <Text style={styles.text}>Your wallet is connected:{address}</Text>
         {isContractSuccess && <Text style={styles.text}>Signature: {isPatient?.toString()}</Text>}
         {isContractError && <Text style={styles.error}>Error: {contractError?.toString()}</Text>}
-        {isSuccess && <Text style={styles.text}>Data: {data?.[0]?.value ? JSON.stringify(data[0].value) : "No data"}</Text>}
+        {isSuccess && <Text style={styles.text}>User: {JSON.stringify(user)}</Text>}
         {isError && <Text style={styles.error}>Error: {error?.toString()}</Text>}
         <Button title="Disconnect" onPress={() => handleDisconntect()} />
       </View>

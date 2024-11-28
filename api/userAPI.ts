@@ -1,6 +1,7 @@
 import { User } from "@/app/(app)/register";
 
-const url = 'http://172.20.10.2:3000/items';
+const baseURL = process.env.EXPO_PUBLIC_API_URL as string;
+const URL =`${baseURL}/items`;
 
 export const registerUser = async (user: User): Promise<void> => {
     try {
@@ -9,9 +10,7 @@ export const registerUser = async (user: User): Promise<void> => {
             key: 'test',
         };
 
-        console.log(JSON.stringify(userWithKey));
-
-        const response = await fetch(url, {
+        const response = await fetch(URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
