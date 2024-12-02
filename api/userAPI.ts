@@ -3,11 +3,11 @@ import { User } from "@/app/(app)/register";
 const baseURL = process.env.EXPO_PUBLIC_API_URL as string;
 const URL =`${baseURL}/items`;
 
-export const registerUser = async (user: User): Promise<void> => {
+export const registerUser = async (user: User, address: string | null): Promise<void> => {
     try {
         const userWithKey = {
             ...user,
-            key: 'test',
+            key: address,
         };
 
         const response = await fetch(URL, {

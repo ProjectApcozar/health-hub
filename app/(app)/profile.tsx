@@ -46,7 +46,7 @@ export default function Profile() {
         }}
       >
         <Text style={styles.text}>Your wallet is connected:{address}</Text>
-        {isContractSuccess && <Text style={styles.text}>Signature: {isPatient?.toString()}</Text>}
+        {isContractSuccess && <Text style={styles.text}>Is Patient: {isPatient?.toString()}</Text>}
         {isContractError && <Text style={styles.error}>Error: {contractError?.toString()}</Text>}
         {isSuccess && <Text style={styles.text}>User: {JSON.stringify(user)}</Text>}
         {isError && <Text style={styles.error}>Error: {error?.toString()}</Text>}
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 10,
+    padding: 20,
     backgroundColor: "#62CCC7",
   },
   backButton: {

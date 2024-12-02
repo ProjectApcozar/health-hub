@@ -30,7 +30,8 @@ export default function Register() {
   const { writeContract } = useWriteContract();
 
   const onSubmit: SubmitHandler<User> = async (data) => {
-    await registerUser(data);
+    if (!address) return;
+    await registerUser(data, address);
     await writeContract({
       abi: healthhubABI,
       address: contractAddress,
