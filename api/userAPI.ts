@@ -1,13 +1,17 @@
 import { User } from "@/app/(app)/register";
+import { encryptData } from "@/utils/crypto";
 
 const baseURL = process.env.EXPO_PUBLIC_API_URL as string;
 const URL =`${baseURL}/items`;
 
-export const registerUser = async (user: User, address: string | null): Promise<void> => {
+export const registerUser = async (user: User, address: string): Promise<void> => {
     try {
-        const userWithKey = {
-            ...user,
-            key: address,
+        
+        const encryptedData = await encryptData(user, address);
+        
+        const encryptedUserWithKey = {
+            ...encryptedData,
+            key: address
         };
 
         const response = await fetch(URL, {
@@ -15,7 +19,7 @@ export const registerUser = async (user: User, address: string | null): Promise<
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(userWithKey),
+            body: JSON.stringify(encryptedUserWithKey),
         });
 
         if (!response.ok) {
