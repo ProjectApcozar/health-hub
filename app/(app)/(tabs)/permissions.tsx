@@ -9,19 +9,21 @@ export default function Home() {
   const { address } = useAccount();
   const { disconnect } = useDisconnect();
 
+  if (!address) return null;
+
   const  {
     isPatient, 
     isSuccess: isContractSuccess, 
     error: contractError, 
     isError: isContractError 
-  } = useIsPatient(address || null);
+  } = useIsPatient(address);
 
   const {
     user,
     isSuccess,
     isError,
     error
-  } = useGetUserByAddress(address || null);
+  } = useGetUserByAddress(address);
 
   const handleDisconntect = () => {
     disconnect();
