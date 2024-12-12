@@ -6,33 +6,35 @@ import {
   StyleSheet,
   Dimensions,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
 } from "react-native-reanimated";
-import { Link } from "expo-router";
+import { useRouter } from "expo-router";
 import { useGetUserByAddress } from "@/hooks/useGetUserByAddress";
 import { useAccount } from "wagmi";
+import { CommonHeader } from "@/components/CommonHeader";
 
 const { width, height } = Dimensions.get("window");
 
 export default function RadialMenu() {
   const { address } = useAccount();
+  const router = useRouter();
+  if (!address) return null;
 
   const {
     user
-  } = useGetUserByAddress(address || null);
+  } = useGetUserByAddress(address);
   
   const radius = Math.min(width, height) * 0.3;
   const angles = [30, 90, 150, 210, 270, 330];
   const items = [
-    "Pruebas Analíticas",
-    "Pruebas de Imagen", 
-    "Vacunas", 
-    "Incapacidad temportal", 
-    "Medicación", 
-    "Informes Clínicos"
+    { label: "Pruebas Analíticas", href: "/medication" as const },
+    { label: "Pruebas de Imagen", href: "/medication" as const },
+    { label: "Vacunas", href: "/medication"  as const },
+    { label: "Incapacidad Temporal", href: "/medication" as const },
+    { label: "Medicación", href: "/medication" as const },
+    { label: "Informes Clínicos", href: "/reports" as const },
   ];
 
   const menuPositions = angles.map((angle) => {
@@ -45,22 +47,7 @@ export default function RadialMenu() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Link href={"/profile"} asChild>
-          <TouchableOpacity
-            style={styles.profileButton}
-          >
-            <Text style={styles.profileText}>AP</Text>
-          </TouchableOpacity>
-        </Link>
-        <Text style={styles.greetingText}>{`Hola ${user?.nombre}`}</Text>
-        <TouchableOpacity
-          style={styles.notificationButton}
-          onPress={() => alert("No tienes nuevas notificaciones")}
-        >
-          <Ionicons name="notifications-outline" size={24} color="#333" />
-        </TouchableOpacity>
-      </View>
+      <CommonHeader userName={user?.name} />
       <View style={styles.menuContainer}>
         {items.map((item, index) => {
           const animatedStyle = useAnimatedStyle(() => ({
@@ -72,13 +59,17 @@ export default function RadialMenu() {
 
           return (
             <Animated.View key={index} style={[styles.menuItem, animatedStyle]}>
-              <TouchableOpacity style={[styles.itemButton]}>
-                <Text style={styles.itemText}>{item}</Text>
-              </TouchableOpacity>
+                <TouchableOpacity 
+                  style={[styles.itemButton]} 
+                  onPress={()=> router.push(item.href)}>
+                  <Text style={styles.itemText}>{item.label}</Text>
+                </TouchableOpacity>
             </Animated.View>
           );
         })}
-        <TouchableOpacity style={styles.centerButton}>
+        <TouchableOpacity 
+          style={styles.centerButton}
+          onPress={() => router.push("/basic")}>
           <Text style={styles.centerText}>Datos Médicos</Text>
         </TouchableOpacity>
       </View>
@@ -89,7 +80,7 @@ export default function RadialMenu() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#F5F5F5",
   },
   header: {
     width: "100%",

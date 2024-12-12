@@ -2,7 +2,7 @@ import { healthhubABI } from "@/abis/HealthHubABI";
 import { contractAddress } from "@/constants/ContractAddress";
 import { useReadContract } from "wagmi";
 
-export const useIsPatient = (address: string | null) => {
+export const useIsPatient = (address: string) => {
 
     const { data, isSuccess, isError, error, isLoading } = useReadContract({
         abi: healthhubABI,
