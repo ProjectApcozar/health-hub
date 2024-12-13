@@ -1,6 +1,8 @@
 import { healthhubABI } from '@/abis/HealthHubABI';
 import { registerUser } from '@/api/userAPI';
 import { contractAddress } from '@/constants/ContractAddress';
+import { useIsDoctor } from '@/hooks/useIsDoctor';
+import { useIsPatient } from '@/hooks/useIsPatient';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
@@ -28,7 +30,9 @@ export default function Register() {
   const router = useRouter();
   const { address } = useAccount();
   const { writeContract } = useWriteContract();
-
+  const { isPatient } = useIsPatient(address);
+  const { isDoctor } = useIsDoctor(address);
+  
   const onSubmit: SubmitHandler<User> = async (data) => {
     if (!address) return;
     await registerUser(data, address);
@@ -38,7 +42,9 @@ export default function Register() {
       functionName: 'registerPatient',
       account: address
     });
-    router.replace("/");
+
+    if (isPatient) router.replace("/");
+    else if (isDoctor) router.replace("/");
   };
 
   return (

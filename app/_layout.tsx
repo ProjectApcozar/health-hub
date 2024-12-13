@@ -5,6 +5,8 @@ import { mainnet, polygon, arbitrum, sepolia } from '@wagmi/core/chains';
 import { createAppKit, defaultWagmiConfig, AppKit } from '@reown/appkit-wagmi-react-native';
 import { Slot } from "expo-router";
 import { WagmiProvider, } from 'wagmi';
+import { Provider } from "react-redux";
+import { store } from '@/store';
 
 const queryClient = new QueryClient();
 
@@ -28,11 +30,13 @@ createAppKit({
 
 export default function RootLayout() {
   return (
-    <WagmiProvider config={wagmiConfig}>
-      <QueryClientProvider client={queryClient}>
-        <Slot />
-        <AppKit />
-      </QueryClientProvider>
-    </WagmiProvider>
+    <Provider store={store}>
+      <WagmiProvider config={wagmiConfig}>
+        <QueryClientProvider client={queryClient}>
+          <Slot />
+          <AppKit />
+        </QueryClientProvider>
+      </WagmiProvider>
+    </Provider>
   );
 };

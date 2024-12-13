@@ -17,7 +17,7 @@ import { CommonHeader } from "@/components/CommonHeader";
 
 const { width, height } = Dimensions.get("window");
 
-export default function RadialMenu() {
+export default function DoctorHome() {
   const { address } = useAccount();
   const router = useRouter();
   if (!address) return null;
@@ -70,7 +70,7 @@ export default function RadialMenu() {
         <TouchableOpacity 
           style={styles.centerButton}
           onPress={() => router.push("/basic")}>
-          <Text style={styles.centerText}>Datos Médicos</Text>
+          <Text style={styles.centerText}>Menu doctor</Text>
         </TouchableOpacity>
       </View>
     </View>
