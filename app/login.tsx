@@ -4,21 +4,24 @@ import { useRouter } from "expo-router";
 import { useAccount } from "wagmi";
 import { useEffect } from "react";
 import { useIsPatient } from "@/hooks/useIsPatient";
+import { useIsDoctor } from "@/hooks/useIsDoctor";
 
 export default function Login() {
 
   const { isConnected, address } = useAccount();
-  const { isPatient, isLoading } = useIsPatient(address || null);
+  const { isPatient, isLoading: isLoadingPatient } = useIsPatient(address);
+  const { isDoctor, isLoading: isLoadingDoctor } = useIsDoctor(address);
   const router = useRouter();
 
   useEffect(() => {
-    
-    if (!isConnected || isLoading) return;
 
-    if (isPatient) router.replace("/");
+    if (!isConnected || isLoadingPatient) return;
+    
+    if (isDoctor && isPatient) router.replace("/role-selection");
+    else if (isPatient) router.replace("/");
     else router.replace("/register");
 
-  }, [ isConnected, isPatient, isLoading ]);
+  }, [ isConnected, isPatient, isLoadingPatient, isLoadingDoctor ]);
 
   return (
 

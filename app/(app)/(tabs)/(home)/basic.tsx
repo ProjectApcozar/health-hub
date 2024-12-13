@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Dimensions, Pressable, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Card, Text, Avatar, Divider } from 'react-native-paper';
+import { Card, Text, Avatar } from 'react-native-paper';
 import { CommonHeader } from '@/components/CommonHeader';
 import { useGetUserByAddress } from '@/hooks/useGetUserByAddress';
 import { useAccount } from 'wagmi';

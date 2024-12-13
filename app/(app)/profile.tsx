@@ -4,31 +4,37 @@ import { useRouter } from "expo-router";
 import { useIsPatient } from "@/hooks/useIsPatient";
 import { Ionicons } from "@expo/vector-icons";
 import { useGetUserByAddress } from "@/hooks/useGetUserByAddress";
+import { useDispatch } from "react-redux";
+import { clearUserRole } from "@/store/userRoleSlice";
 
 export default function Profile() {
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const { address } = useAccount();
   const { disconnect } = useDisconnect();
+
+  if (!address) return;
 
   const  {
     isPatient, 
     isSuccess: isContractSuccess, 
     error: contractError, 
     isError: isContractError 
-  } = useIsPatient(address || null);
+  } = useIsPatient(address);
   
   const {
     user,
     isSuccess,
     isError,
     error
-  } = useGetUserByAddress(address || null);
+  } = useGetUserByAddress(address);
 
   const handleDisconntect = () => {
     disconnect();
+    dispatch(clearUserRole());
     router.replace("/login");
-  }
+  };
 
   return (
     <View style={styles.container}>

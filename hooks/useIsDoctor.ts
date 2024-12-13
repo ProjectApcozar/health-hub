@@ -2,12 +2,12 @@ import { healthhubABI } from "@/abis/HealthHubABI";
 import { contractAddress } from "@/constants/ContractAddress";
 import { useReadContract } from "wagmi";
 
-export const useIsPatient = (address?: string) => {
+export const useIsDoctor = (address?: string) => {
 
     const { data, isSuccess, isError, error, isLoading } = useReadContract({
         abi: healthhubABI,
         address: contractAddress,
-        functionName: 'isPatient',
+        functionName: 'isDoctor',
         args: [address],
         query: {
           enabled: !!address,
@@ -15,7 +15,7 @@ export const useIsPatient = (address?: string) => {
     });
 
     return {
-        isPatient: data as boolean,
+        isDoctor: data as boolean,
         isSuccess,
         isError,
         error,
