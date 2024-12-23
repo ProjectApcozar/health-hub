@@ -5,6 +5,8 @@ import { useAccount } from "wagmi";
 import { useEffect } from "react";
 import { useIsPatient } from "@/hooks/useIsPatient";
 import { useIsDoctor } from "@/hooks/useIsDoctor";
+import { useDispatch } from "react-redux";
+import { setUserRole } from "@/store/userRoleSlice";
 
 export default function Login() {
 
@@ -12,14 +14,17 @@ export default function Login() {
   const { isPatient, isLoading: isLoadingPatient } = useIsPatient(address);
   const { isDoctor, isLoading: isLoadingDoctor } = useIsDoctor(address);
   const router = useRouter();
+  const dispatch = useDispatch();
 
   useEffect(() => {
 
     if (!isConnected || isLoadingPatient) return;
     
     if (isDoctor && isPatient) router.replace("/role-selection");
-    else if (isPatient) router.replace("/");
-    else router.replace("/register");
+    else if (isPatient) {
+      dispatch(setUserRole("patient"));
+      router.replace("/");
+    } else router.replace("/register");
 
   }, [ isConnected, isPatient, isLoadingPatient, isLoadingDoctor ]);
 
