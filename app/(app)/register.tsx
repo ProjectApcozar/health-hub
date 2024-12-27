@@ -1,12 +1,11 @@
 import { healthhubABI } from '@/abis/HealthHubABI';
 import { registerUser } from '@/api/userAPI';
 import { contractAddress } from '@/constants/ContractAddress';
-import { useIsDoctor } from '@/hooks/useIsDoctor';
-import { useIsPatient } from '@/hooks/useIsPatient';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Dimensions } from 'react-native';
+import { Button, Card } from 'react-native-paper';
 import { useAccount, useWriteContract } from 'wagmi';
 
 export type User = {
@@ -19,6 +18,8 @@ export type User = {
   telefono: string;
 };
 
+const { width, height } = Dimensions.get('window');
+
 export default function Register() {
   const {
     register,
@@ -30,7 +31,7 @@ export default function Register() {
   const router = useRouter();
   const { address } = useAccount();
   const { writeContract } = useWriteContract();
-  
+
   const onSubmit: SubmitHandler<User> = async (data) => {
     if (!address) return;
     await registerUser(data, address);
@@ -38,69 +39,122 @@ export default function Register() {
       abi: healthhubABI,
       address: contractAddress,
       functionName: 'registerPatient',
-      account: address
+      account: address,
     });
 
-    router.replace("/");
+    router.replace('/');
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Nombre</Text>
-      <TextInput
-        style={styles.input}
-        {...register('nombre', { required: 'El nombre es obligatorio' })}
-        onChangeText={(text) => setValue('nombre', text)}
-      />
-      {errors.nombre && <Text style={styles.error}>{errors.nombre.message}</Text>}
+      <Card style={styles.card}>
+        <Card.Title title="Registro de Usuario" titleStyle={styles.cardTitle} />
+        <Card.Content>
+          <View>
+            <Text style={styles.label}>Nombre</Text>
+            <TextInput
+              style={styles.input}
+              {...register('nombre', { required: 'El nombre es obligatorio' })}
+              onChangeText={(text) => setValue('nombre', text)}
+              placeholder="Introduce tu nombre"
+              placeholderTextColor="#777"
+            />
+            {errors.nombre && <Text style={styles.error}>{errors.nombre.message}</Text>}
 
-      <Text style={styles.label}>Edad</Text>
-      <TextInput
-        style={styles.input}
-        {...register('edad', {
-          required: 'La edad es obligatoria',
-        })}
-        onChangeText={(text) => setValue('edad', text)}
-      />
-      {errors.edad && <Text style={styles.error}>{errors.edad.message}</Text>}
+            <Text style={styles.label}>Edad</Text>
+            <TextInput
+              style={styles.input}
+              {...register('edad', {
+                required: 'La edad es obligatoria',
+              })}
+              onChangeText={(text) => setValue('edad', text)}
+              placeholder="Introduce tu edad"
+              placeholderTextColor="#777"
+            />
+            {errors.edad && <Text style={styles.error}>{errors.edad.message}</Text>}
 
-      <Text style={styles.label}>Teléfono</Text>
-      <TextInput
-        style={styles.input}
-        keyboardType="phone-pad"
-        {...register('telefono', {
-          required: 'El teléfono es obligatorio',
-          pattern: {
-            value: /^\d+$/,
-            message: 'El teléfono debe contener solo números',
-          },
-        })}
-        onChangeText={(text) => setValue('telefono', text)}
-      />
-      {errors.telefono && <Text style={styles.error}>{errors.telefono.message}</Text>}
+            <Text style={styles.label}>Teléfono</Text>
+            <TextInput
+              style={styles.input}
+              keyboardType="phone-pad"
+              {...register('telefono', {
+                required: 'El teléfono es obligatorio',
+                pattern: {
+                  value: /^\d+$/,
+                  message: 'El teléfono debe contener solo números',
+                },
+              })}
+              onChangeText={(text) => setValue('telefono', text)}
+              placeholder="Introduce tu teléfono"
+              placeholderTextColor="#777"
+            />
+            {errors.telefono && <Text style={styles.error}>{errors.telefono.message}</Text>}
 
-      <Button title="Enviar" onPress={handleSubmit(onSubmit)} />
+            <Button
+              mode="contained"
+              style={styles.button}
+              onPress={handleSubmit(onSubmit)}
+              labelStyle={styles.buttonText}
+            >
+              Enviar
+            </Button>
+          </View>
+        </Card.Content>
+      </Card>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5F5F5',
+    padding: width * 0.05,
+  },
+  card: {
+    width: '100%',
+    borderRadius: 15,
+    backgroundColor: '#fff',
+    elevation: 3,
+  },
+  cardTitle: {
+    fontSize: height * 0.025,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#333',
   },
   label: {
-    fontSize: 16,
-    marginBottom: 4,
+    fontSize: height * 0.02,
+    marginVertical: height * 0.01,
+    color: '#333',
+    fontWeight: '600',
   },
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
-    padding: 8,
-    marginBottom: 8,
-    borderRadius: 4,
+    padding: 10,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    marginBottom: height * 0.015,
+    fontSize: height * 0.018,
+    color: '#333',
   },
   error: {
     color: 'red',
-    marginBottom: 8,
+    fontSize: height * 0.018,
+    marginBottom: height * 0.01,
+  },
+  button: {
+    marginTop: height * 0.02,
+    backgroundColor: '#62CCC7',
+    borderRadius: 10,
+    paddingVertical: height * 0.015,
+  },
+  buttonText: {
+    fontSize: height * 0.02,
+    fontWeight: 'bold',
+    color: '#fff',
   },
 });
