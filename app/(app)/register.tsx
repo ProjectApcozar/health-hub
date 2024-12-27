@@ -30,8 +30,6 @@ export default function Register() {
   const router = useRouter();
   const { address } = useAccount();
   const { writeContract } = useWriteContract();
-  const { isPatient } = useIsPatient(address);
-  const { isDoctor } = useIsDoctor(address);
   
   const onSubmit: SubmitHandler<User> = async (data) => {
     if (!address) return;
@@ -43,8 +41,7 @@ export default function Register() {
       account: address
     });
 
-    if (isPatient) router.replace("/");
-    else if (isDoctor) router.replace("/");
+    router.replace("/");
   };
 
   return (

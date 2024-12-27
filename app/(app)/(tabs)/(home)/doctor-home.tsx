@@ -47,7 +47,7 @@ export default function DoctorHome() {
 
   return (
     <View style={styles.container}>
-      <CommonHeader userName={user?.name} />
+      <CommonHeader userName={user?.nombre} />
       <View style={styles.menuContainer}>
         {items.map((item, index) => {
           const animatedStyle = useAnimatedStyle(() => ({

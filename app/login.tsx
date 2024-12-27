@@ -17,14 +17,15 @@ export default function Login() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-
     if (!isConnected || isLoadingPatient) return;
     
     if (isDoctor && isPatient) router.replace("/role-selection");
     else if (isPatient) {
       dispatch(setUserRole("patient"));
       router.replace("/");
-    } else router.replace("/register");
+    } else {
+      router.replace("/register");
+    } 
 
   }, [ isConnected, isPatient, isLoadingPatient, isLoadingDoctor ]);
 
