@@ -56,7 +56,7 @@ export default function Reports() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <CommonHeader userName={user?.name} />
+      <CommonHeader userName={user?.nombre} />
       <View style={styles.content}>
         <Card style={styles.primaryCard}>
           <Card.Content>

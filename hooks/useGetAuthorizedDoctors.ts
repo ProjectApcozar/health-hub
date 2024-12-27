@@ -1,13 +1,12 @@
-import { decryptData } from "@/utils/crypto";
 import { useQuery } from "@tanstack/react-query";
 
 const baseURL = process.env.EXPO_PUBLIC_API_URL as string;
 
-export const useGetUserByAddress = (address: string) => {
-    const URL =`${baseURL}/items/${address}`;
+export const useGetAuthorizedDoctors = (address: string) => {
+    const URL =`${baseURL}/relations/patient/${address}`;
         
-    const { isSuccess , isError, error, data } = useQuery({
-      queryKey: ['user', address],
+    const { isSuccess , isError, error, data } = useQuery<string[]>({
+      queryKey: ['doctors', address],
       queryFn: async () =>
         await fetch(URL, {
           method: 'GET',
@@ -16,13 +15,11 @@ export const useGetUserByAddress = (address: string) => {
           },
         }).then((res) =>
           res.json(),
-        ).then(async (encryptedData) => {
-          return await decryptData(encryptedData, address);
-        }),
+        ),
     });
     
     return {
-      user: data,
+      doctors: data || [],
       isSuccess,
       isError,
       error

@@ -1,18 +1,18 @@
 import { RootState } from "@/store";
 import { useSelector } from "react-redux";
-import DoctorHome from "./doctor-home";
-import PatientHome from "./patient-home";
 import { StyleSheet } from "react-native";
 import { Redirect } from "expo-router";
+import DoctorPermissions from "./doctor-permissions";
+import PatientPermissions from "./patient-permissions";
 
-export default function Home() {
+export default function Permissions() {
   const role = useSelector((state: RootState) => state.userRole.role);
 
   if (!role) {
     return <Redirect href="/login" />;
   }
 
-  return role === "doctor" ? <DoctorHome /> : <PatientHome />;
+  return role === "doctor" ? <DoctorPermissions /> : <PatientPermissions />;
 }
 
 const styles = StyleSheet.create({
