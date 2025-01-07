@@ -1,4 +1,4 @@
-import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Button, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useAccount, useDisconnect } from "wagmi";
 import { useRouter } from "expo-router";
 import { useIsPatient } from "@/hooks/useIsPatient";
@@ -37,7 +37,7 @@ export default function Profile() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
@@ -58,7 +58,7 @@ export default function Profile() {
         {isError && <Text style={styles.error}>Error: {error?.toString()}</Text>}
         <Button title="Disconnect" onPress={() => handleDisconntect()} />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
