@@ -3,10 +3,21 @@ import { registerUser } from '@/api/userAPI';
 import { contractAddress } from '@/constants/ContractAddress';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import { View, Text, TextInput, StyleSheet, Dimensions } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  Dimensions,
+  Keyboard,
+  TouchableWithoutFeedback,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { Button, Card } from 'react-native-paper';
 import { useAccount, useWriteContract } from 'wagmi';
+import { useForm, SubmitHandler } from 'react-hook-form';
 
 export type User = {
   nombre: string;
@@ -41,76 +52,82 @@ export default function Register() {
       functionName: 'registerPatient',
       account: address,
     });
-
     router.replace('/');
   };
 
   return (
-    <View style={styles.container}>
-      <Card style={styles.card}>
-        <Card.Title title="Registro de Usuario" titleStyle={styles.cardTitle} />
-        <Card.Content>
-          <View>
-            <Text style={styles.label}>Nombre</Text>
-            <TextInput
-              style={styles.input}
-              {...register('nombre', { required: 'El nombre es obligatorio' })}
-              onChangeText={(text) => setValue('nombre', text)}
-              placeholder="Introduce tu nombre"
-              placeholderTextColor="#777"
-            />
-            {errors.nombre && <Text style={styles.error}>{errors.nombre.message}</Text>}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <Card style={styles.card}>
+            <Card.Title title="Registro de Usuario" titleStyle={styles.cardTitle} />
+            <Card.Content>
+              <View>
+                <Text style={styles.label}>Nombre</Text>
+                <TextInput
+                  style={styles.input}
+                  {...register('nombre', { required: 'El nombre es obligatorio' })}
+                  onChangeText={(text) => setValue('nombre', text)}
+                  placeholder="Introduce tu nombre"
+                  placeholderTextColor="#777"
+                />
+                {errors.nombre && <Text style={styles.error}>{errors.nombre.message}</Text>}
 
-            <Text style={styles.label}>Edad</Text>
-            <TextInput
-              style={styles.input}
-              {...register('edad', {
-                required: 'La edad es obligatoria',
-              })}
-              onChangeText={(text) => setValue('edad', text)}
-              placeholder="Introduce tu edad"
-              placeholderTextColor="#777"
-            />
-            {errors.edad && <Text style={styles.error}>{errors.edad.message}</Text>}
+                <Text style={styles.label}>Edad</Text>
+                <TextInput
+                  style={styles.input}
+                  {...register('edad', { required: 'La edad es obligatoria' })}
+                  onChangeText={(text) => setValue('edad', text)}
+                  placeholder="Introduce tu edad"
+                  placeholderTextColor="#777"
+                />
+                {errors.edad && <Text style={styles.error}>{errors.edad.message}</Text>}
 
-            <Text style={styles.label}>Teléfono</Text>
-            <TextInput
-              style={styles.input}
-              keyboardType="phone-pad"
-              {...register('telefono', {
-                required: 'El teléfono es obligatorio',
-                pattern: {
-                  value: /^\d+$/,
-                  message: 'El teléfono debe contener solo números',
-                },
-              })}
-              onChangeText={(text) => setValue('telefono', text)}
-              placeholder="Introduce tu teléfono"
-              placeholderTextColor="#777"
-            />
-            {errors.telefono && <Text style={styles.error}>{errors.telefono.message}</Text>}
-
-            <Button
-              mode="contained"
-              style={styles.button}
-              onPress={handleSubmit(onSubmit)}
-              labelStyle={styles.buttonText}
-            >
-              Enviar
-            </Button>
-          </View>
-        </Card.Content>
-      </Card>
-    </View>
+                <Text style={styles.label}>Teléfono</Text>
+                <TextInput
+                  style={styles.input}
+                  keyboardType="phone-pad"
+                  {...register('telefono', {
+                    required: 'El teléfono es obligatorio',
+                    pattern: {
+                      value: /^\d+$/,
+                      message: 'El teléfono debe contener solo números',
+                    },
+                  })}
+                  onChangeText={(text) => setValue('telefono', text)}
+                  placeholder="Introduce tu teléfono"
+                  placeholderTextColor="#777"
+                />
+                {errors.telefono && <Text style={styles.error}>{errors.telefono.message}</Text>}
+                <Button
+                  mode="contained"
+                  style={styles.button}
+                  onPress={handleSubmit(onSubmit)}
+                  labelStyle={styles.buttonText}
+                >
+                  Enviar
+                </Button>
+              </View>
+            </Card.Content>
+          </Card>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#F5F5F5',
+  },
+  scrollContainer: {
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5F5F5',
     padding: width * 0.05,
   },
   card: {

@@ -8,6 +8,7 @@ import PatientPermissions from "./patient-permissions";
 export default function Permissions() {
   const role = useSelector((state: RootState) => state.userRole.role);
 
+  console.log(role);
   if (!role) {
     return <Redirect href="/login" />;
   }

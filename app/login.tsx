@@ -1,5 +1,5 @@
-import { ConnectButton } from "@reown/appkit-wagmi-react-native";
-import { Image, Text, View, StyleSheet } from "react-native";
+import { useAppKit } from "@reown/appkit-wagmi-react-native";
+import { Image, Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { useAccount } from "wagmi";
 import { useEffect } from "react";
@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux";
 import { setUserRole } from "@/store/userRoleSlice";
 
 export default function Login() {
+  const { open } = useAppKit()
 
   const { isConnected, address } = useAccount();
   const { isPatient, isLoading: isLoadingPatient } = useIsPatient(address);
@@ -18,19 +19,21 @@ export default function Login() {
 
   useEffect(() => {
     if (!isConnected || isLoadingPatient) return;
-    
+
+    if (!isPatient && !isDoctor) router.replace("/register");
+
     if (isDoctor && isPatient) router.replace("/role-selection");
     else if (isPatient) {
       dispatch(setUserRole("patient"));
       router.replace("/");
-    } else {
-      router.replace("/register");
-    } 
+    } else if (isDoctor) {
+      dispatch(setUserRole("doctor"));
+      router.replace("/");
+    }
 
   }, [ isConnected, isPatient, isLoadingPatient, isLoadingDoctor ]);
 
   return (
-
     <View
       style={styles.container}
     >
@@ -41,11 +44,9 @@ export default function Login() {
         />
         <Text style={styles.title}>Inicio de Sesión</Text>
       </View>
-      <ConnectButton 
-        label="Conecte su wallet" 
-        loadingLabel="Conectando"
-        style={styles.connectButton}
-      />
+      <TouchableOpacity style={styles.button} onPress={() => open() }>
+        <Text style={styles.buttonText}>Conectar wallet</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -74,5 +75,20 @@ const styles = StyleSheet.create({
   connectButton: {
     backgroundColor: "#62CCC7",
     paddingHorizontal: 20,
+  },
+  button: {
+    alignSelf: "center",
+    backgroundColor: "#62CCC7",
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    marginBottom: 15,
+    alignItems: "center",
+    elevation: 3,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });

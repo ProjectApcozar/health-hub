@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
+  SafeAreaView,
 } from "react-native";
 import Animated, {
   useSharedValue,
@@ -45,7 +46,7 @@ export default function PatientHome() {
   });
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <CommonHeader userName={user?.nombre} />
       <View style={styles.menuContainer}>
         {items.map((item, index) => {
@@ -72,7 +73,7 @@ export default function PatientHome() {
           <Text style={styles.centerText}>Datos Médicos</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
