@@ -87,7 +87,7 @@ export default function DoctorPermissions() {
           style={styles.centralButton}
           onPress={() => setModalVisible(true)}
         >
-          <Text style={styles.centralButtonText}>Añadir Pacientes</Text>
+          <Text style={styles.centralButtonText}>Añadir Doctores</Text>
         </TouchableOpacity>
 
         <Card style={styles.groupedCard}>
