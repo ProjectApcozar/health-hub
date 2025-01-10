@@ -54,6 +54,25 @@ export const healthhubABI = [
 				"type": "address"
 			}
 		],
+		"name": "AccessRequest",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "patient",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "doctor",
+				"type": "address"
+			}
+		],
 		"name": "AccessRevoked",
 		"type": "event"
 	},
@@ -68,44 +87,6 @@ export const healthhubABI = [
 		"name": "authorizeDoctor",
 		"outputs": [],
 		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "doctor",
-				"type": "address"
-			}
-		],
-		"name": "isDoctor",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "patient",
-				"type": "address"
-			}
-		],
-		"name": "isPatient",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -158,6 +139,19 @@ export const healthhubABI = [
 		"inputs": [
 			{
 				"internalType": "address",
+				"name": "patient",
+				"type": "address"
+			}
+		],
+		"name": "requestAccess",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
 				"name": "doctor",
 				"type": "address"
 			}
@@ -166,5 +160,43 @@ export const healthhubABI = [
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "doctor",
+				"type": "address"
+			}
+		],
+		"name": "isDoctor",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "patient",
+				"type": "address"
+			}
+		],
+		"name": "isPatient",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
 	}
-];
+]
