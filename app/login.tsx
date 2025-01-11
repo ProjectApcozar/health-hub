@@ -20,7 +20,9 @@ export default function Login() {
   useEffect(() => {
     if (!isConnected || isLoadingPatient) return;
 
-    if (!isPatient && !isDoctor) router.replace("/register");
+    if (!isPatient && !isDoctor){
+      router.replace("/register");
+    }
 
     if (isDoctor && isPatient) router.replace("/role-selection");
     else if (isPatient) {

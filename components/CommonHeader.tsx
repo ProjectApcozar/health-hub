@@ -20,18 +20,10 @@ export const CommonHeader = ({ userName = "Usuario" }: CommonHeaderProps) => {
     onLogs: logs => { 
       console.log('access request logs');
       console.log(logs);
-      setEvents((prev) => [...prev, ...logs]); // Guarda los eventos en el estado
+      setEvents((prev) => [...prev, ...logs]);
     },
     onError: error => console.error(error),
   });
-
-  useEffect(() => {
-    if (events.length > 0) {
-      console.log('events', events);
-    }
-  }, [events]);	
-
-  console.log('events', events);
 
   return (
     <View style={styles.header}>
