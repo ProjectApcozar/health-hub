@@ -6,7 +6,7 @@ export const useGetAuthorizedDoctors = (address: string) => {
     const URL =`${baseURL}/relations/patient/${address}`;
         
     const { isSuccess , isError, error, data } = useQuery<string[]>({
-      queryKey: ['doctors', address],
+      queryKey: ['doctors'],
       queryFn: async () =>
         await fetch(URL, {
           method: 'GET',

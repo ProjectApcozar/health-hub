@@ -7,6 +7,7 @@ import { WagmiProvider } from 'wagmi';
 import { Provider } from "react-redux";
 import { store } from '@/store';
 import { wagmiConfig } from '@/utils/wagmi';
+import { PaperProvider } from 'react-native-paper';
 
 const queryClient = new QueryClient();
 
@@ -23,8 +24,10 @@ export default function RootLayout() {
     <Provider store={store}>
       <WagmiProvider config={wagmiConfig}>
         <QueryClientProvider client={queryClient}>
-          <Slot />
-          <AppKit />
+          <PaperProvider>
+            <Slot />
+            <AppKit />
+          </PaperProvider>
         </QueryClientProvider>
       </WagmiProvider>
     </Provider>

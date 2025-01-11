@@ -5,8 +5,6 @@ import { Card, Text, Avatar, Button } from 'react-native-paper';
 import { CommonHeader } from '@/components/CommonHeader';
 import { useGetUserByAddress } from '@/hooks/useGetUserByAddress';
 import { useAccount, useWriteContract } from 'wagmi';
-import { useGetAuthorizedDoctors } from '@/hooks/useGetAuthorizedDoctors';
-import { writeContract } from 'viem/actions';
 import { healthhubABI } from '@/abis/HealthHubABI';
 import { contractAddress } from '@/constants/ContractAddress';
 
@@ -66,7 +64,7 @@ export default function DoctorPermissions() {
     await writeContract({
         abi: healthhubABI,
         address: contractAddress,
-        functionName: 'authorizeDoctor',
+        functionName: 'requestAccess',
         account: address,
         args: [comment],
     });

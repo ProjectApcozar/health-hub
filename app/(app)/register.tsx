@@ -49,7 +49,7 @@ export default function Register() {
     await writeContract({
       abi: healthhubABI,
       address: contractAddress,
-      functionName: 'registerPatient',
+      functionName: 'registerPatientSelf',
       account: address,
     });
     router.replace('/');
