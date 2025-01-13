@@ -1,4 +1,5 @@
-import { Button, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Avatar, Button, Card } from "react-native-paper";
 import { useAccount, useDisconnect } from "wagmi";
 import { useRouter } from "expo-router";
 import { useIsPatient } from "@/hooks/useIsPatient";
@@ -14,20 +15,20 @@ export default function Profile() {
   const { address } = useAccount();
   const { disconnect } = useDisconnect();
 
-  if (!address) return;
+  if (!address) return null;
 
-  const  {
-    isPatient, 
-    isSuccess: isContractSuccess, 
-    error: contractError, 
-    isError: isContractError 
+  const {
+    isPatient,
+    isSuccess: isContractSuccess,
+    error: contractError,
+    isError: isContractError,
   } = useIsPatient(address);
-  
+
   const {
     user,
     isSuccess,
     isError,
-    error
+    error,
   } = useGetUserByAddress(address);
 
   const handleDisconntect = () => {
@@ -42,21 +43,39 @@ export default function Profile() {
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Profile</Text>
+        <Text style={styles.headerTitle}>Perfil</Text>
       </View>
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Text style={styles.text}>Your wallet is connected:{address}</Text>
-        {isContractSuccess && <Text style={styles.text}>Is Patient: {isPatient?.toString()}</Text>}
-        {isContractError && <Text style={styles.error}>Error: {contractError?.toString()}</Text>}
-        {isSuccess && <Text style={styles.text}>User: {JSON.stringify(user)}</Text>}
-        {isError && <Text style={styles.error}>Error: {error?.toString()}</Text>}
-        <Button title="Disconnect" onPress={() => handleDisconntect()} />
+      <View style={styles.content}>
+        <Card style={styles.profileCard}>
+          <Card.Content>
+            <View style={styles.profileInfo}>
+              <Avatar.Icon size={64} icon="account" style={styles.avatar} />
+              <Text style={styles.userName}>{user?.name || "Usuario Anónimo"}</Text>
+              <Text style={styles.userRole}>{isPatient ? "Paciente" : "Usuario"}</Text>
+            </View>
+          </Card.Content>
+        </Card>
+
+        <View style={styles.infoContainer}>
+          <Text style={styles.infoLabel}>Dirección Wallet:</Text>
+          <Text style={styles.infoText}>{address}</Text>
+
+          {isSuccess && (
+            <Text style={styles.infoText}>Usuario: {JSON.stringify(user)}</Text>
+          )}
+
+          {isError && (
+            <Text style={styles.error}>Error: {error?.toString()}</Text>
+          )}
+        </View>
+
+        <Button
+          mode="contained"
+          style={styles.disconnectButton}
+          onPress={handleDisconntect}
+        >
+          Desconectar
+        </Button>
       </View>
     </SafeAreaView>
   );
@@ -77,28 +96,64 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
     color: "#fff",
   },
   content: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
     padding: 20,
+    alignItems: "center",
   },
-  text: {
+  profileCard: {
+    width: "100%",
+    borderRadius: 15,
+    backgroundColor: "#fff",
+    elevation: 3,
+    marginBottom: 20,
+  },
+  profileInfo: {
+    alignItems: "center",
+  },
+  avatar: {
+    backgroundColor: "#62CCC7",
+  },
+  userName: {
+    fontSize: 22,
+    fontWeight: "bold",
+    marginTop: 10,
+    color: "#333",
+  },
+  userRole: {
     fontSize: 16,
-    marginBottom: 10,
+    color: "#777",
+    marginTop: 5,
   },
-  address: {
-    fontSize: 14,
+  infoContainer: {
+    width: "100%",
+    marginTop: 20,
+  },
+  infoLabel: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 5,
+  },
+  infoText: {
+    fontSize: 16,
+    color: "#555",
     marginBottom: 10,
-    color: "blue",
   },
   error: {
     color: "red",
     fontSize: 14,
     marginBottom: 10,
+  },
+  disconnectButton: {
+    marginTop: 30,
+    backgroundColor: "#62CCC7",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
   },
 });
