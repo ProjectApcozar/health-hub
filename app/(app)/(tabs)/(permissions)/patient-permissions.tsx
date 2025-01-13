@@ -47,10 +47,9 @@ export default function PatientPermissions() {
       <View style={styles.content}>
         <Card style={styles.primaryCard}>
           <Card.Content>
-            <Text style={styles.cardTitle}>Datos Básicos de Salud</Text>
+            <Text style={styles.cardTitle}>Permisos</Text>
           </Card.Content>
         </Card>
-
         <Button
           mode="contained"
           onPress={() => setModalVisible(true)}
