@@ -32,7 +32,7 @@ const dataList = [
   },
 ];
 
-export default function Medication() {
+export default function TemporaryIncapacity() {
   const { address } = useAccount();
   if (!address) return null;
 
@@ -60,7 +60,7 @@ export default function Medication() {
       <View style={styles.content}>
         <Card style={styles.primaryCard}>
           <Card.Content>
-            <Text style={styles.cardTitle}>Medicación</Text>
+            <Text style={styles.cardTitle}>Incapacidad Temporal</Text>
           </Card.Content>
         </Card>
         <Card style={styles.groupedCard}>
