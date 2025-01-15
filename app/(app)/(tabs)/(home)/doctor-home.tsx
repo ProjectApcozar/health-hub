@@ -29,12 +29,12 @@ export default function DoctorHome() {
   const radius = Math.min(width, height) * 0.3;
   const angles = [30, 90, 150, 210, 270, 330];
   const items = [
-    { label: "Pruebas Analíticas", href: "/medication" as const },
-    { label: "Pruebas de Imagen", href: "/medication" as const },
-    { label: "Vacunas", href: "/medication"  as const },
-    { label: "Incapacidad Temporal", href: "/medication" as const },
+    { label: "Pruebas Analíticas", href: "/analytic-reports" as const },
+    { label: "Pruebas de Imagen", href: "/image-reports" as const },
+    { label: "Vacunas", href: "/vaccines"  as const },
+    { label: "Incapacidad Temporal", href: "/temporary-incapacity" as const },
     { label: "Medicación", href: "/medication" as const },
-    { label: "Informes Clínicos", href: "/reports" as const },
+    { label: "Informes Clínicos", href: "/clinic-reports" as const },
   ];
 
   const menuPositions = angles.map((angle) => {
@@ -69,7 +69,7 @@ export default function DoctorHome() {
         })}
         <TouchableOpacity 
           style={styles.centerButton}
-          onPress={() => router.push("/basic")}>
+          onPress={() => router.push("/basic-data")}>
           <Text style={styles.centerText}>Menu doctor</Text>
         </TouchableOpacity>
       </View>

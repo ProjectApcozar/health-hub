@@ -32,7 +32,7 @@ const dataList = [
   },
 ];
 
-export default function Reports() {
+export default function ImageReports() {
   const { address } = useAccount();
   if (!address) return null;
 
@@ -60,7 +60,7 @@ export default function Reports() {
       <View style={styles.content}>
         <Card style={styles.primaryCard}>
           <Card.Content>
-            <Text style={styles.cardTitle}>Datos Básicos de Salud</Text>
+            <Text style={styles.cardTitle}>Pruebas de Imagen</Text>
           </Card.Content>
         </Card>
         <Card style={styles.groupedCard}>

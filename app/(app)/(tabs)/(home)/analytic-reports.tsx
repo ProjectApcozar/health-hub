@@ -32,7 +32,7 @@ const dataList = [
   },
 ];
 
-export default function Medication() {
+export default function AnalyticReports() {
   const { address } = useAccount();
   if (!address) return null;
 
@@ -60,7 +60,7 @@ export default function Medication() {
       <View style={styles.content}>
         <Card style={styles.primaryCard}>
           <Card.Content>
-            <Text style={styles.cardTitle}>Medicación</Text>
+            <Text style={styles.cardTitle}>Pruebas Analíticas</Text>
           </Card.Content>
         </Card>
         <Card style={styles.groupedCard}>
