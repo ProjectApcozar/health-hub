@@ -17,7 +17,7 @@ connectors.push(walletConnect({ projectId, metadata }));
 
 const transportsArr = chains.map(chain => [
   chain.id,
-  http(),
+  webSocket('wss://sepolia.infura.io/ws/v3/82f0375fcd6844948892bf0305a6ba2a'),
 ]);
 
 const transports = Object.fromEntries(transportsArr);
