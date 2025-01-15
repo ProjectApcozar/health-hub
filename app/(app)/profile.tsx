@@ -1,82 +1,130 @@
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Avatar, Button, Card } from "react-native-paper";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, TextInput, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
+import { Button, Card, Portal, Text, Appbar, Avatar } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useAccount, useDisconnect } from "wagmi";
 import { useRouter } from "expo-router";
-import { useIsPatient } from "@/hooks/useIsPatient";
-import { Ionicons } from "@expo/vector-icons";
 import { useGetUserByAddress } from "@/hooks/useGetUserByAddress";
-import { useDispatch } from "react-redux";
-import { clearUserRole } from "@/store/userRoleSlice";
+import { updateUser } from "@/api/userAPI";
+import { useIsPatient } from "@/hooks/useIsPatient";
 
 export default function Profile() {
   const router = useRouter();
-  const dispatch = useDispatch();
-
   const { address } = useAccount();
   const { disconnect } = useDisconnect();
+  const { isPatient } = useIsPatient(address);
 
-  if (!address) return null;
+  const [fields, setFields] = useState({
+    phone_number: "",
+    date_of_birth: "",
+    dni: "",
+    hospital: "",
+    residence: "",
+    email: "",
+  });
 
-  const {
-    isPatient,
-    isSuccess: isContractSuccess,
-    error: contractError,
-    isError: isContractError,
-  } = useIsPatient(address);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [editingField, setEditingField] = useState<keyof typeof fields | null>(null);
+  const [tempValue, setTempValue] = useState("");
 
-  const {
-    user,
-    isSuccess,
-    isError,
-    error,
-  } = useGetUserByAddress(address);
+  const { user } = useGetUserByAddress(address!);
+  useEffect(() => {
+    if (user) {
+      setFields({
+        phone_number: user.phone_number || "",
+        date_of_birth: user.date_of_birth || "",
+        dni: user.dni || "",
+        hospital: user.hospital || "",
+        residence: user.residence || "",
+        email: user.email || "",
+      });
+    }
+  }, [user]);
 
-  const handleDisconntect = () => {
+  const handleSave = async () => {
+    if (editingField) {
+      const updatedFields = { ...fields, [editingField]: tempValue };
+      console.log(updatedFields);
+      setFields(updatedFields);
+      await updateUser({ [editingField]: tempValue }, address!);
+      setModalVisible(false);
+    }
+  };
+
+  const openModal = (field: keyof typeof fields) => {
+    setEditingField(field);
+    setTempValue(fields[field]);
+    setModalVisible(true);
+  };
+
+  const handleDisconnect = () => {
     disconnect();
-    dispatch(clearUserRole());
     router.replace("/login");
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Perfil</Text>
-      </View>
-      <View style={styles.content}>
+      <Appbar.Header style={styles.header}>
+        <Appbar.BackAction onPress={() => router.back()} />
+        <Appbar.Content title="Perfil" />
+      </Appbar.Header>
+
+      <ScrollView contentContainerStyle={styles.scrollContent}>
         <Card style={styles.profileCard}>
-          <Card.Content>
-            <View style={styles.profileInfo}>
-              <Avatar.Icon size={64} icon="account" style={styles.avatar} />
-              <Text style={styles.userName}>{user?.name || "Usuario Anónimo"}</Text>
-              <Text style={styles.userRole}>{isPatient ? "Paciente" : "Usuario"}</Text>
-            </View>
+          <Card.Content style={styles.profileCardContent}>
+            <Avatar.Icon size={64} icon="account" style={styles.avatar} />
+            <Text style={styles.userName}>{user?.name || "Usuario Anónimo"}</Text>
+            <Text style={styles.userRole}>{isPatient ? "Paciente" : "Usuario"}</Text>
+            <Text style={styles.walletAddress}>{address}</Text>
           </Card.Content>
         </Card>
 
-        <View style={styles.infoContainer}>
-          <Text style={styles.infoLabel}>Dirección Wallet:</Text>
-          <Text style={styles.infoText}>{address}</Text>
+        {Object.entries(fields).map(([field, value]) => (
+          <Card
+            style={[styles.infoCard, { minHeight: value ? undefined : 50 }]}
+            key={field}
+            onPress={() => openModal(field as keyof typeof fields)}
+          >
+            <Card.Content style={styles.cardContent}>
+              <Text style={styles.fieldDescription}>
+                {field.replace(/_/g, " ").toUpperCase()}
+              </Text>
+              <Text style={styles.fieldValue}>{value || "No especificado"}</Text>
+            </Card.Content>
+          </Card>
+        ))}
 
-          {isSuccess && (
-            <Text style={styles.infoText}>Usuario: {JSON.stringify(user)}</Text>
-          )}
-
-          {isError && (
-            <Text style={styles.error}>Error: {error?.toString()}</Text>
-          )}
-        </View>
-
-        <Button
-          mode="contained"
-          style={styles.disconnectButton}
-          onPress={handleDisconntect}
-        >
+        <Button mode="contained" style={styles.disconnectButton} onPress={handleDisconnect}>
           Desconectar
         </Button>
-      </View>
+      </ScrollView>
+
+      <Portal>
+        {modalVisible && (
+          <SafeAreaView style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>
+              {editingField?.replace(/_/g, " ").toUpperCase()}
+            </Text>
+            <TextInput
+              style={styles.input}
+              value={tempValue}
+              onChangeText={setTempValue}
+              placeholder={`Introduce tu ${editingField}`}
+              keyboardType={editingField === "email" ? "email-address" : "default"}
+            />
+            <Button mode="contained" onPress={handleSave} style={styles.saveButton}>
+              Guardar
+            </Button>
+            <Button
+              onPress={() => setModalVisible(false)}
+              style={styles.cancelButton}
+              textColor="#FF4444"
+            >
+              Cancelar
+            </Button>
+          </SafeAreaView>
+        )}
+      </Portal>
     </SafeAreaView>
   );
 }
@@ -84,76 +132,102 @@ export default function Profile() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#F5F5F5",
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 20,
     backgroundColor: "#62CCC7",
   },
-  backButton: {
-    marginRight: 10,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#fff",
-  },
-  content: {
-    flex: 1,
+  scrollContent: {
     padding: 20,
-    alignItems: "center",
   },
   profileCard: {
-    width: "100%",
-    borderRadius: 15,
-    backgroundColor: "#fff",
-    elevation: 3,
     marginBottom: 20,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 15,
+    padding: 10,
+    alignItems: "center",
+    elevation: 2,
   },
-  profileInfo: {
+  profileCardContent: {
     alignItems: "center",
   },
   avatar: {
     backgroundColor: "#62CCC7",
   },
   userName: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: "bold",
-    marginTop: 10,
-    color: "#333",
+    marginTop: 8,
+    color: "#333333",
+    textAlign: "center",
   },
   userRole: {
-    fontSize: 16,
-    color: "#777",
-    marginTop: 5,
-  },
-  infoContainer: {
-    width: "100%",
-    marginTop: 20,
-  },
-  infoLabel: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 5,
-  },
-  infoText: {
-    fontSize: 16,
-    color: "#555",
-    marginBottom: 10,
-  },
-  error: {
-    color: "red",
     fontSize: 14,
+    color: "#777777",
+    marginTop: 4,
+    textAlign: "center",
+  },
+  walletAddress: {
+    marginTop: 6,
+    fontSize: 12,
+    color: "#888888",
+    textAlign: "center",
+  },
+  infoCard: {
     marginBottom: 10,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 40,
+    elevation: 1,
+    paddingHorizontal: 12,
+  },
+  cardContent: {
+    flexDirection: "column",
+    justifyContent: "center",
+  },
+  fieldDescription: {
+    fontSize: 12,
+    color: "#777777",
+    marginBottom: 3,
+  },
+  fieldValue: {
+    fontSize: 14,
+    color: "#333333",
+    fontWeight: "bold",
   },
   disconnectButton: {
-    marginTop: 30,
+    marginTop: 20,
     backgroundColor: "#62CCC7",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    alignSelf: "center",
+    width: "50%",
+  },
+  modalContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "#FFFFFF",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+  },
+  modalTitle: {
+    fontSize: 18,
+    color: "#333333",
+    marginBottom: 20,
+  },
+  input: {
+    width: "100%",
+    backgroundColor: "#F5F5F5",
     borderRadius: 10,
+    color: "#333333",
+    padding: 10,
+    marginBottom: 20,
+  },
+  saveButton: {
+    backgroundColor: "#62CCC7",
+    marginBottom: 10,
+  },
+  cancelButton: {
+    backgroundColor: "transparent",
   },
 });

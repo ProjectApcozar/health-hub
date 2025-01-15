@@ -18,15 +18,17 @@ import {
 import { Button, Card } from 'react-native-paper';
 import { useAccount, useWriteContract } from 'wagmi';
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { setUserRole } from '@/store/userRoleSlice';
+import { useDispatch } from 'react-redux';
 
 export type User = {
-  nombre: string;
-  surname: string;
-  edad: string;
-  country: string;
-  city: string;
-  postalCode: string;
-  telefono: string;
+  name: string;
+  date_of_birth: string;
+  dni: string;
+  residence: string;
+  phone_number: string;
+  email: string;
+  hospital: string;
 };
 
 const { width, height } = Dimensions.get('window');
@@ -42,6 +44,7 @@ export default function Register() {
   const router = useRouter();
   const { address } = useAccount();
   const { writeContract } = useWriteContract();
+  const dispatch = useDispatch();
 
   const onSubmit: SubmitHandler<User> = async (data) => {
     if (!address) return;
@@ -52,6 +55,7 @@ export default function Register() {
       functionName: 'registerPatientSelf',
       account: address,
     });
+    dispatch(setUserRole('patient'));
     router.replace('/');
   };
 
@@ -69,39 +73,39 @@ export default function Register() {
                 <Text style={styles.label}>Nombre</Text>
                 <TextInput
                   style={styles.input}
-                  {...register('nombre', { required: 'El nombre es obligatorio' })}
-                  onChangeText={(text) => setValue('nombre', text)}
+                  {...register('name', { required: 'El nombre es obligatorio' })}
+                  onChangeText={(text) => setValue('name', text)}
                   placeholder="Introduce tu nombre"
                   placeholderTextColor="#777"
                 />
-                {errors.nombre && <Text style={styles.error}>{errors.nombre.message}</Text>}
+                {errors.name && <Text style={styles.error}>{errors.name.message}</Text>}
 
                 <Text style={styles.label}>Edad</Text>
                 <TextInput
                   style={styles.input}
-                  {...register('edad', { required: 'La edad es obligatoria' })}
-                  onChangeText={(text) => setValue('edad', text)}
+                  {...register('date_of_birth', { required: 'La edad es obligatoria' })}
+                  onChangeText={(text) => setValue('date_of_birth', text)}
                   placeholder="Introduce tu edad"
                   placeholderTextColor="#777"
                 />
-                {errors.edad && <Text style={styles.error}>{errors.edad.message}</Text>}
+                {errors.date_of_birth && <Text style={styles.error}>{errors.date_of_birth.message}</Text>}
 
                 <Text style={styles.label}>Teléfono</Text>
                 <TextInput
                   style={styles.input}
                   keyboardType="phone-pad"
-                  {...register('telefono', {
+                  {...register('phone_number', {
                     required: 'El teléfono es obligatorio',
                     pattern: {
                       value: /^\d+$/,
                       message: 'El teléfono debe contener solo números',
                     },
                   })}
-                  onChangeText={(text) => setValue('telefono', text)}
+                  onChangeText={(text) => setValue('phone_number', text)}
                   placeholder="Introduce tu teléfono"
                   placeholderTextColor="#777"
                 />
-                {errors.telefono && <Text style={styles.error}>{errors.telefono.message}</Text>}
+                {errors.phone_number && <Text style={styles.error}>{errors.phone_number.message}</Text>}
                 <Button
                   mode="contained"
                   style={styles.button}
