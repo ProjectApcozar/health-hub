@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, TextInput, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
+import { StyleSheet, TextInput, ScrollView } from "react-native";
 import { Button, Card, Portal, Text, Appbar, Avatar } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAccount, useDisconnect } from "wagmi";
