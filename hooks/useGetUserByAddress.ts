@@ -17,7 +17,7 @@ export const useGetUserByAddress = (address: string) => {
         }).then((res) =>
           res.json(),
         ).then(async (encryptedData) => {
-          return await decryptData(encryptedData, address);
+          return await decryptData(encryptedData);
         }),
     });
     

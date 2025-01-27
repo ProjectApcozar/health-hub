@@ -18,7 +18,7 @@ export default function Login() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!isConnected || isLoadingPatient) return;
+    if (!isConnected || isLoadingPatient || isLoadingDoctor) return;
 
     if (!isPatient && !isDoctor){
       router.replace("/register");
@@ -33,7 +33,7 @@ export default function Login() {
       router.replace("/");
     }
 
-  }, [ isConnected, isPatient, isLoadingPatient, isLoadingDoctor ]);
+  }, [ isConnected, isDoctor, isPatient, isLoadingPatient, isLoadingDoctor ]);
 
   return (
     <View

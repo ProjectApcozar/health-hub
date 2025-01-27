@@ -1,15 +1,12 @@
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
 import { Link } from "expo-router";
 import { Avatar, IconButton } from "react-native-paper";
-import { useContractEvents } from "@/context/ContractEventProvider";
 
 interface CommonHeaderProps {
   userName?: string;
 };
 
 export const CommonHeader = ({ userName = "Usuario" }: CommonHeaderProps) => {
-  const { events } = useContractEvents();
-  console.log(events);
 
   return (
     <View style={styles.header}>

@@ -1,10 +1,8 @@
-import { ContractEventProvider } from '@/context/ContractEventProvider';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Tabs } from 'expo-router';
 
 export default function TabLayout() {
   return (
-    <ContractEventProvider>
       <Tabs screenOptions={{ 
         tabBarActiveTintColor: 'blue', 
         headerShown: false,
@@ -24,6 +22,5 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
-    </ContractEventProvider>
   );
 }
