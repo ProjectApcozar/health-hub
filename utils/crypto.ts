@@ -1,25 +1,17 @@
 import { User } from '@/app/(app)/register';
 import CryptoES from 'crypto-es';
-import { getStoredSalt, storeSalt } from './secureStore';
+import { getStoredKey } from './secureStore';
 
-const generateAndStoreSalt = async (): Promise<string> => {
-    let salt = await getStoredSalt();
-
-    if (!salt) {
-        salt = CryptoES.lib.WordArray.random(32).toString();
-        await storeSalt(salt);
-    };
-
-    return salt;
+const generateSalt = () => {
+    return CryptoES.lib.WordArray.random(32).toString();
 };
 
-const derivateKey = (key: string, salt: string): string => {
+export const getAesKey = (key: string): string => {
+    const salt = generateSalt();
     return CryptoES.PBKDF2(key, salt, { keySize: 256 / 32, iterations: 10000 }).toString();
 };
 
-export const encryptData = async (data: any, address: string): Promise<any> => {
-    const salt = await generateAndStoreSalt();
-    const aesKey = derivateKey(address, salt);
+export const encryptData = async (data: any, aesKey: string): Promise<any> => {
 
     const encryptedData: Partial<any> = {};
     for (const [key, value] of Object.entries(data)) {
@@ -31,9 +23,9 @@ export const encryptData = async (data: any, address: string): Promise<any> => {
     return encryptedData;
 }; 
 
-export const decryptData = async (encryptedData: any, address: string): Promise<any> => {
-    const salt = await generateAndStoreSalt();
-    const aesKey = derivateKey(address, salt);
+export const decryptData = async (encryptedData: any): Promise<any> => {
+    const aesKey = await getStoredKey();
+    if (!aesKey) return encryptedData;
 
     const decryptedData: Partial<any> = {};
     for (const [key, value] of Object.entries(encryptedData)) {

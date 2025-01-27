@@ -1,17 +1,24 @@
 import { User } from "@/app/(app)/register";
-import { encryptData } from "@/utils/crypto";
+import { encryptData, getAesKey } from "@/utils/crypto";
+import { storeKey } from "@/utils/secureStore";
 
 const baseURL = process.env.EXPO_PUBLIC_API_URL as string;
-const URL =`${baseURL}/items`;
+const URL =`${baseURL}/users`;
 
 export const registerUser = async (user: User, address: string): Promise<void> => {
     try {
-        
-        const encryptedData = await encryptData(user, address);
+        const aesKey = getAesKey(address);
+
+        if (aesKey) {
+            await storeKey(aesKey);
+        }
+
+        const encryptedData = await encryptData(user, aesKey);
         
         const encryptedUserWithKey = {
             ...encryptedData,
-            key: address
+            cipher_key: aesKey,
+            key: address,
         };
 
         const response = await fetch(URL, {
@@ -60,3 +67,31 @@ export const updateUser = async (user:Partial<User>, address: string): Promise<v
         throw error;
     }
 };
+
+export const isPatient = async (address: string): Promise<boolean> => {
+    try {
+        const response = await fetch(`${URL}/is-patient/${address}`);
+        if (!response.ok) {
+            throw new Error(`Error en la solicitud: ${response.status}`);
+        }
+        const data = await response.json();
+        return data.isDoctor;
+    } catch (error) {
+        console.error('Error al verificar si es paciente', error);
+        throw error;
+    }
+}
+
+export const isDoctor = async (address: string): Promise<boolean> => {
+    try {
+        const response = await fetch(`${URL}/is-doctor/${address}`);
+        if (!response.ok) {
+            throw new Error(`Error en la solicitud: ${response.status}`);
+        }
+        const data = await response.json();
+        return data.isDoctor;
+    } catch (error) {
+        console.error('Error al verificar si es doctor', error);
+        throw error;
+    }
+}

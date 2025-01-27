@@ -1,6 +1,4 @@
-import { healthhubABI } from '@/abis/HealthHubABI';
 import { registerUser } from '@/api/userAPI';
-import { contractAddress } from '@/constants/ContractAddress';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import {
@@ -16,7 +14,7 @@ import {
   Platform,
 } from 'react-native';
 import { Button, Card } from 'react-native-paper';
-import { useAccount, useWriteContract } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { setUserRole } from '@/store/userRoleSlice';
 import { useDispatch } from 'react-redux';
@@ -24,11 +22,8 @@ import { useDispatch } from 'react-redux';
 export type User = {
   name: string;
   date_of_birth: string;
-  dni: string;
-  residence: string;
   phone_number: string;
-  email: string;
-  hospital: string;
+  user_password: string;
 };
 
 const { width, height } = Dimensions.get('window');
@@ -43,18 +38,12 @@ export default function Register() {
 
   const router = useRouter();
   const { address } = useAccount();
-  const { writeContract } = useWriteContract();
   const dispatch = useDispatch();
 
   const onSubmit: SubmitHandler<User> = async (data) => {
     if (!address) return;
+
     await registerUser(data, address);
-    await writeContract({
-      abi: healthhubABI,
-      address: contractAddress,
-      functionName: 'registerPatientSelf',
-      account: address,
-    });
     dispatch(setUserRole('patient'));
     router.replace('/');
   };
@@ -79,7 +68,6 @@ export default function Register() {
                   placeholderTextColor="#777"
                 />
                 {errors.name && <Text style={styles.error}>{errors.name.message}</Text>}
-
                 <Text style={styles.label}>Edad</Text>
                 <TextInput
                   style={styles.input}
@@ -89,7 +77,6 @@ export default function Register() {
                   placeholderTextColor="#777"
                 />
                 {errors.date_of_birth && <Text style={styles.error}>{errors.date_of_birth.message}</Text>}
-
                 <Text style={styles.label}>Teléfono</Text>
                 <TextInput
                   style={styles.input}
@@ -106,6 +93,16 @@ export default function Register() {
                   placeholderTextColor="#777"
                 />
                 {errors.phone_number && <Text style={styles.error}>{errors.phone_number.message}</Text>}
+                <Text style={styles.label}>Contraseña</Text>
+                <TextInput
+                  style={styles.input}
+                  secureTextEntry
+                  {...register('user_password', { required: 'La contraseña es obligatoria' })}
+                  onChangeText={(text) => setValue('user_password', text)}
+                  placeholder="Introduce tu contraseña"
+                  passwordRules="minlength: 8; required: lower; required: upper; required: digit; required: special;"
+                  placeholderTextColor="#777"
+                  />
                 <Button
                   mode="contained"
                   style={styles.button}
