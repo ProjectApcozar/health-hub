@@ -38,13 +38,13 @@ export default function Register() {
 
   const router = useRouter();
   const { address } = useAccount();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   const onSubmit: SubmitHandler<User> = async (data) => {
     if (!address) return;
 
     await registerUser(data, address);
-    dispatch(setUserRole('patient'));
+    // dispatch(setUserRole('patient'));
     router.replace('/');
   };
 

@@ -1,19 +1,26 @@
-import { RootState } from "@/store";
-import { useSelector } from "react-redux";
 import { StyleSheet } from "react-native";
 import { Redirect } from "expo-router";
 import DoctorPermissions from "./doctor-permissions";
 import PatientPermissions from "./patient-permissions";
+import { useAccount } from "wagmi";
+import { useIsPatient } from "@/hooks/useIsPatient";
+import { useIsDoctor } from "@/hooks/useIsDoctor";
+import Login from "@/app/login";
 
 export default function Permissions() {
-  const role = useSelector((state: RootState) => state.userRole.role);
+  const { address } = useAccount();
+  const { isPatient } = useIsPatient(address);
+  const { isDoctor } = useIsDoctor(address);
 
-  console.log(role);
-  if (!role) {
-    return <Redirect href="/login" />;
+  if (!isPatient && !isDoctor) {
+    return <Login />;
   }
 
-  return role === "doctor" ? <DoctorPermissions /> : <PatientPermissions />;
+  if (isPatient) {
+    return <PatientPermissions />;
+  } else {
+    return <DoctorPermissions />;
+  }
 }
 
 const styles = StyleSheet.create({
