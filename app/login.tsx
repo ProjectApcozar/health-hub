@@ -15,7 +15,7 @@ export default function Login() {
   const { isPatient, isLoading: isLoadingPatient } = useIsPatient(address);
   const { isDoctor, isLoading: isLoadingDoctor } = useIsDoctor(address);
   const router = useRouter();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   useEffect(() => {
     if (!isConnected || isLoadingPatient || isLoadingDoctor) return;
@@ -26,10 +26,10 @@ export default function Login() {
 
     if (isDoctor && isPatient) router.replace("/role-selection");
     else if (isPatient) {
-      dispatch(setUserRole("patient"));
+      // dispatch(setUserRole("patient"));
       router.replace("/");
     } else if (isDoctor) {
-      dispatch(setUserRole("doctor"));
+      // dispatch(setUserRole("doctor"));
       router.replace("/");
     }
 

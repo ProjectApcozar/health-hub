@@ -49,7 +49,6 @@ export const updateUser = async (user:Partial<User>, address: string): Promise<v
             key: address
         };
 
-        console.log(UPDATE_URL);
         const response = await fetch(UPDATE_URL, {
             method: 'PATCH',
             headers: {

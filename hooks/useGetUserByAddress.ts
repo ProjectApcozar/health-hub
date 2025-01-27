@@ -4,8 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 const baseURL = process.env.EXPO_PUBLIC_API_URL as string;
 
 export const useGetUserByAddress = (address: string) => {
-    const URL =`${baseURL}/items/${address}`;
-        
+    const URL =`${baseURL}/users/${address}`;
+
     const { isSuccess , isError, error, data } = useQuery({
       queryKey: ['user', address],
       queryFn: async () =>
