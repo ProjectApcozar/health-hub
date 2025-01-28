@@ -1,4 +1,4 @@
-import { registerUser } from '@/api/userAPI';
+import { registerUser } from '@/services/userAPI';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import {
@@ -24,6 +24,10 @@ export type User = {
   date_of_birth: string;
   phone_number: string;
   user_password: string;
+  dni: string;
+  hospital: string;
+  residence: string;
+  email: string;
 };
 
 const { width, height } = Dimensions.get('window');

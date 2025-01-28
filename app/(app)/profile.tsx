@@ -1,18 +1,17 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { StyleSheet, TextInput, ScrollView } from "react-native";
 import { Button, Card, Portal, Text, Appbar, Avatar } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAccount, useDisconnect } from "wagmi";
 import { useRouter } from "expo-router";
-import { useGetUserByAddress } from "@/hooks/useGetUserByAddress";
-import { updateUser } from "@/api/userAPI";
-import { useIsPatient } from "@/hooks/useIsPatient";
+import { updateUser } from "@/services/userAPI";
+import { useGetIsPatientQuery, useGetUserByAddressQuery } from "@/services/user";
 
 export default function Profile() {
   const router = useRouter();
   const { address } = useAccount();
   const { disconnect } = useDisconnect();
-  const { isPatient } = useIsPatient(address);
+  const { data: isPatient } = useGetIsPatientQuery(address!);
 
   const [fields, setFields] = useState({
     phone_number: "",
@@ -27,7 +26,8 @@ export default function Profile() {
   const [editingField, setEditingField] = useState<keyof typeof fields | null>(null);
   const [tempValue, setTempValue] = useState("");
 
-  const { user } = useGetUserByAddress(address!);
+  const { data: user } = useGetUserByAddressQuery(address!);
+
   useEffect(() => {
     if (user) {
       setFields({
