@@ -3,12 +3,12 @@ import { View, StyleSheet, TextInput, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card, Text, Button, Portal, Modal } from 'react-native-paper';
 import { CommonHeader } from '@/components/CommonHeader';
-import { useGetUserByAddress } from '@/hooks/useGetUserByAddress';
 import { useAccount, useWriteContract } from 'wagmi';
 import { healthhubABI } from '@/abis/HealthHubABI';
 import { contractAddress } from '@/constants/ContractAddress';
 import { PermissionsList } from '@/components/PermissionsList';
 import { useQueryClient } from '@tanstack/react-query';
+import { useGetUserByAddressQuery } from '@/services/user';
 
 const { width, height } = Dimensions.get('window');
 
@@ -21,7 +21,7 @@ export default function PatientPermissions() {
 
   if (!address) return null;
 
-  const { user } = useGetUserByAddress(address);
+  const { data: user } = useGetUserByAddressQuery(address);
 
   const handleSumbit = (comment: string) => {
     writeContract(
@@ -43,7 +43,7 @@ export default function PatientPermissions() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <CommonHeader userName={user?.nombre} />
+      <CommonHeader userName={user?.name} />
       <View style={styles.content}>
         <Card style={styles.primaryCard}>
           <Card.Content>

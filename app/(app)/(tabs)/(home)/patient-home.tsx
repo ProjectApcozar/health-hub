@@ -12,9 +12,9 @@ import Animated, {
   useAnimatedStyle,
 } from "react-native-reanimated";
 import { useRouter } from "expo-router";
-import { useGetUserByAddress } from "@/hooks/useGetUserByAddress";
 import { useAccount } from "wagmi";
 import { CommonHeader } from "@/components/CommonHeader";
+import { useGetUserByAddressQuery } from "@/services/user";
 
 const { width, height } = Dimensions.get("window");
 
@@ -23,8 +23,8 @@ export default function PatientHome() {
   const router = useRouter();
   if (!address) return null;
   const {
-    user
-  } = useGetUserByAddress(address);
+    data: user
+  } = useGetUserByAddressQuery(address);
   
   const radius = Math.min(width, height) * 0.3;
   const angles = [30, 90, 150, 210, 270, 330];
@@ -47,7 +47,7 @@ export default function PatientHome() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <CommonHeader userName={user?.nombre} />
+      <CommonHeader userName={user?.name} />
       <View style={styles.menuContainer}>
         {items.map((item, index) => {
           const animatedStyle = useAnimatedStyle(() => ({

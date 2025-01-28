@@ -1,54 +1,60 @@
 import { useAppKit } from "@reown/appkit-wagmi-react-native";
-import { Image, Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { Image, View, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { useAccount } from "wagmi";
 import { useEffect } from "react";
 import { useIsPatient } from "@/hooks/useIsPatient";
-import { useIsDoctor } from "@/hooks/useIsDoctor";
-import { useDispatch } from "react-redux";
-import { setUserRole } from "@/store/userRoleSlice";
+import { Button, Text } from "react-native-paper";
+import { useGetIsDoctorQuery, useGetIsPatientQuery } from "@/services/user";
 
 export default function Login() {
   const { open } = useAppKit()
 
-  const { isConnected, address } = useAccount();
-  const { isPatient, isLoading: isLoadingPatient } = useIsPatient(address);
-  const { isDoctor, isLoading: isLoadingDoctor } = useIsDoctor(address);
+  const { isConnected, address, isConnecting } = useAccount();
+  const { data: isPatient, isLoading: isLoadingPatient } = useGetIsPatientQuery(address!);
+  const { data: isDoctor, isLoading: isLoadingDoctor } = useGetIsDoctorQuery(address!);
   const router = useRouter();
-  // const dispatch = useDispatch();
 
   useEffect(() => {
     if (!isConnected || isLoadingPatient || isLoadingDoctor) return;
 
     if (!isPatient && !isDoctor){
       router.replace("/register");
+      return;
     }
 
-    if (isDoctor && isPatient) router.replace("/role-selection");
-    else if (isPatient) {
-      // dispatch(setUserRole("patient"));
+    if (isDoctor && isPatient){
+      router.replace("/role-selection");
+      return;
+    } 
+     
+    if (isPatient || isDoctor) {
       router.replace("/");
-    } else if (isDoctor) {
-      // dispatch(setUserRole("doctor"));
-      router.replace("/");
+      return;
     }
 
   }, [ isConnected, isDoctor, isPatient, isLoadingPatient, isLoadingDoctor ]);
 
   return (
-    <View
-      style={styles.container}
-    >
+    <View style={styles.container}>
       <View style={styles.header}>
         <Image
           source={require('@/assets/images/hh-logo.png')}
           style={styles.logo}
         />
-        <Text style={styles.title}>Inicio de Sesión</Text>
+        <Text variant="headlineSmall" style={styles.title}>
+          Inicio de Sesión
+        </Text>
       </View>
-      <TouchableOpacity style={styles.button} onPress={() => open() }>
-        <Text style={styles.buttonText}>Conectar wallet</Text>
-      </TouchableOpacity>
+      <Button
+        mode="contained"
+        loading={isConnecting}
+        style={styles.button} 
+        onPress={() => open()}
+        labelStyle={styles.buttonText}
+      >
+        {!isConnecting ? "Conectar Wallet" : "Conectando..."}
+      </Button>
     </View>
   );
 }

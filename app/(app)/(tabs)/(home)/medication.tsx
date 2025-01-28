@@ -9,9 +9,9 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Card, Text, Avatar, Button } from "react-native-paper";
 import { CommonHeader } from "@/components/CommonHeader";
-import { useGetUserByAddress } from "@/hooks/useGetUserByAddress";
 import { useAccount } from "wagmi";
 import { MedicationForm } from "@/components/MedicationForm";
+import { useGetUserByAddressQuery } from "@/services/user";
 
 const { width, height } = Dimensions.get("window");
 
@@ -43,7 +43,7 @@ export default function Medication() {
   const { address } = useAccount();
   if (!address) return null;
 
-  const { user } = useGetUserByAddress(address);
+  const { data: user } = useGetUserByAddressQuery(address);
   const [modalVisible, setModalVisible] = useState(false);
   const animations = dataList.map(() => new Animated.Value(1));
 
@@ -63,7 +63,7 @@ export default function Medication() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <CommonHeader userName={user?.nombre} />
+      <CommonHeader userName={user?.name} />
       <View style={styles.content}>
         <Card style={styles.primaryCard}>
           <Card.Content>

@@ -3,10 +3,10 @@ import { View, StyleSheet, Dimensions, Pressable, Animated, Modal, TextInput, To
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card, Text, Avatar, Button } from 'react-native-paper';
 import { CommonHeader } from '@/components/CommonHeader';
-import { useGetUserByAddress } from '@/hooks/useGetUserByAddress';
 import { useAccount, useWriteContract } from 'wagmi';
 import { healthhubABI } from '@/abis/HealthHubABI';
 import { contractAddress } from '@/constants/ContractAddress';
+import { useGetUserByAddressQuery } from '@/services/user';
 
 const { width, height } = Dimensions.get('window');
 
@@ -42,7 +42,7 @@ export default function DoctorPermissions() {
 
   if (!address) return null;
 
-  const { user } = useGetUserByAddress(address);
+  const { data: user } = useGetUserByAddressQuery(address);
   /* const { doctors } = useGetAuthorizedDoctors(address); */
   const animations = dataList.map(() => new Animated.Value(1));
 
@@ -72,7 +72,7 @@ export default function DoctorPermissions() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <CommonHeader userName={user?.nombre} />
+      <CommonHeader userName={user?.name} />
       <View style={styles.content}>
         <Card style={styles.primaryCard}>
           <Card.Content>
