@@ -1,4 +1,3 @@
-import { registerUser } from '@/services/userAPI';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import {
@@ -16,10 +15,10 @@ import {
 import { Button, Card } from 'react-native-paper';
 import { useAccount } from 'wagmi';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { setUserRole } from '@/store/userRoleSlice';
-import { useDispatch } from 'react-redux';
+import { useRegisterUserMutation } from '@/services/user';
 
 export type User = {
+  address: string;
   name: string;
   date_of_birth: string;
   phone_number: string;
@@ -42,12 +41,13 @@ export default function Register() {
 
   const router = useRouter();
   const { address } = useAccount();
+  const [ registerUser ] = useRegisterUserMutation();
   // const dispatch = useDispatch();
 
-  const onSubmit: SubmitHandler<User> = async (data) => {
+  const onSubmit: SubmitHandler<User> = async (user: Partial<User>) => {
     if (!address) return;
 
-    await registerUser(data, address);
+    await registerUser({address, user});
     // dispatch(setUserRole('patient'));
     router.replace('/');
   };
