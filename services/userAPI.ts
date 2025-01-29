@@ -1,11 +1,11 @@
 import { User } from "@/app/(app)/register";
 import { encryptData, getAesKey } from "@/utils/crypto";
-import { storeKey } from "@/utils/secureStore";
+import { getStoredKey, storeKey } from "@/utils/secureStore";
 
 const baseURL = process.env.EXPO_PUBLIC_API_URL as string;
 const URL =`${baseURL}/users`;
 
-export const registerUser = async (user: User, address: string): Promise<void> => {
+export const registerUser = async (user: Partial<User>, address: string) => {
     try {
         const aesKey = getAesKey(address);
 
@@ -32,17 +32,18 @@ export const registerUser = async (user: User, address: string): Promise<void> =
         if (!response.ok) {
             throw new Error(`Error en la solicitud: ${response.status}`);
         }
-        console.log('Usuario registrado');
+        return response.json();
     } catch (error) {
         console.error('Error al registrar el ususario', error);
         throw error;
     }
 };
 
-export const updateUser = async (user:Partial<User>, address: string): Promise<void> => {
+export const updateUser = async (user: Partial<User>, address: string) => {
     try {
         const UPDATE_URL = `${URL}/${address}`;
-        const encryptedData = await encryptData(user, address);
+        const aesKey = await getStoredKey();
+        const encryptedData = await encryptData(user, aesKey!);
         
         const encryptedUserWithKey = {
             ...encryptedData,
@@ -61,36 +62,9 @@ export const updateUser = async (user:Partial<User>, address: string): Promise<v
             throw new Error(`Error en la solicitud: ${response.status}`);
         }
         console.log('Usuario actualizado');
+        return response.json();
     } catch (error) {
         console.error('Error al actualizar el ususario', error);
         throw error;
     }
 };
-
-export const isPatient = async (address: string): Promise<boolean> => {
-    try {
-        const response = await fetch(`${URL}/is-patient/${address}`);
-        if (!response.ok) {
-            throw new Error(`Error en la solicitud: ${response.status}`);
-        }
-        const data = await response.json();
-        return data.isDoctor;
-    } catch (error) {
-        console.error('Error al verificar si es paciente', error);
-        throw error;
-    }
-}
-
-export const isDoctor = async (address: string): Promise<boolean> => {
-    try {
-        const response = await fetch(`${URL}/is-doctor/${address}`);
-        if (!response.ok) {
-            throw new Error(`Error en la solicitud: ${response.status}`);
-        }
-        const data = await response.json();
-        return data.isDoctor;
-    } catch (error) {
-        console.error('Error al verificar si es doctor', error);
-        throw error;
-    }
-}

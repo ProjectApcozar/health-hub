@@ -8,12 +8,12 @@ export default function Home() {
     const { address } = useAccount();
     const { data: isPatient } = useGetIsPatientQuery(address!);
     const { data: isDoctor } = useGetIsDoctorQuery(address!);
-  
-  if (isPatient) {
-    return <PatientHome />;
-  } else if (isDoctor) {
-    return <DoctorHome />;
-  } else {
-    return <Login />;
-  }
+
+    if (isPatient) {
+      return <PatientHome />;
+    } else if (isDoctor) {
+      return <DoctorHome />;
+    } else {
+      return <Login />;
+    }
 };

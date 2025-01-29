@@ -1,6 +1,7 @@
 import { User } from '@/app/(app)/register';
 import { decryptData } from '@/utils/crypto';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { registerUser, updateUser } from './userAPI';
 
 const baseUrl = process.env.EXPO_PUBLIC_API_URL as string;
 // https://redux-toolkit.js.org/rtk-query/usage/queries
@@ -9,6 +10,17 @@ export const usersApi = createApi({
     tagTypes: ['User'],
     baseQuery: fetchBaseQuery({ baseUrl }),
     endpoints: (builder) => ({
+        // CREATE
+        registerUser: builder.mutation<User, { address: string; user: Partial<User>}>({
+            async queryFn({ address, user}) {
+                const data = await registerUser(user, address);
+                return { data };
+            },
+            invalidatesTags: (
+                _result, _error, { address }
+            ) => [{ type: 'User', id: address }],
+        }),
+        // READ
         getUserByAddress: builder.query<User, string>({
             query: (address) => `users/${address}`,
             transformResponse: async (response: any) => {
@@ -30,11 +42,23 @@ export const usersApi = createApi({
             },
             providesTags: (address) => [{ type: 'User', address }],
         }),
+        // UPDATE
+        updateUser: builder.mutation<User, { address: string; user: Partial<User>}>({
+            async queryFn({ address, user }) {
+                const data = await updateUser(user, address);
+                return { data };
+            },
+            invalidatesTags: (
+                _result, _error, { address }
+            ) => [{ type: 'User', address }],
+        }),
     }),
 })
 
 export const { 
+    useRegisterUserMutation,
     useGetIsDoctorQuery,
     useGetIsPatientQuery,
     useGetUserByAddressQuery,
+    useUpdateUserMutation,
 } = usersApi;

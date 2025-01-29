@@ -5,7 +5,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useAccount, useDisconnect } from "wagmi";
 import { useRouter } from "expo-router";
 import { updateUser } from "@/services/userAPI";
-import { useGetIsPatientQuery, useGetUserByAddressQuery } from "@/services/user";
+import { useGetIsPatientQuery, useGetUserByAddressQuery, useUpdateUserMutation } from "@/services/user";
+import { User } from "./register";
 
 export default function Profile() {
   const router = useRouter();
@@ -27,8 +28,10 @@ export default function Profile() {
   const [tempValue, setTempValue] = useState("");
 
   const { data: user } = useGetUserByAddressQuery(address!);
+  const [ updateUser ] = useUpdateUserMutation();
 
   useEffect(() => {
+    console.log(user);
     if (user) {
       setFields({
         phone_number: user.phone_number || "",
@@ -39,14 +42,20 @@ export default function Profile() {
         email: user.email || "",
       });
     }
+    
   }, [user]);
 
   const handleSave = async () => {
     if (editingField) {
       const updatedFields = { ...fields, [editingField]: tempValue };
-      console.log(updatedFields);
       setFields(updatedFields);
-      await updateUser({ [editingField]: tempValue }, address!);
+      if (address) {
+        const updatePayload: Partial<User> = { 
+          [editingField]: tempValue,
+        };
+
+        await updateUser({ address, user: updatePayload });
+      }
       setModalVisible(false);
     }
   };
