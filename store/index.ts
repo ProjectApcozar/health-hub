@@ -1,8 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userRoleReducer from "@/store/userRoleSlice";
-import { usersApi } from "@/services/user";
+import { usersApi } from "@/services/apis/user";
 import { setupListeners } from "@reduxjs/toolkit/query";
-import { permissionsApi } from "@/services/permission";
+import { permissionsApi } from "@/services/apis/permission";
 
 export const store = configureStore({
     reducer: {

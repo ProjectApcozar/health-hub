@@ -11,7 +11,7 @@ import { Card, Text, Avatar, Button } from "react-native-paper";
 import { CommonHeader } from "@/components/CommonHeader";
 import { useAccount } from "wagmi";
 import { MedicationForm } from "@/components/MedicationForm";
-import { useGetUserByAddressQuery } from "@/services/user";
+import { useGetUserByAddressQuery } from "@/services/apis/user";
 
 const { width, height } = Dimensions.get("window");
 

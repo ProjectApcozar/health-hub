@@ -8,7 +8,7 @@ const URL =`${baseURL}/users`;
 export const registerUser = async (user: Partial<User>, address: string) => {
     try {
         const aesKey = getAesKey(address);
-        const password = user.user_password;
+        const password = user.userPassword;
 
         if (password) {
             await storePassword(password);
@@ -21,7 +21,7 @@ export const registerUser = async (user: Partial<User>, address: string) => {
         const encryptedData = await encryptData(user, aesKey);
         const encryptedUserWithKey = {
             ...encryptedData,
-            cipher_key: aesKey,
+            cipherKey: aesKey,
             key: address,
         };
 

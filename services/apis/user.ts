@@ -1,6 +1,6 @@
 import { decryptData } from '@/utils/crypto';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { registerUser, updateUser } from './userAPI';
+import { registerUser, updateUser } from '../services/userService';
 import { User } from '@/common/types';
 
 const baseUrl = process.env.EXPO_PUBLIC_API_URL as string;

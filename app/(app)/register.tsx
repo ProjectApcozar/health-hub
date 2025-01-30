@@ -15,7 +15,7 @@ import {
 import { Button, Card } from 'react-native-paper';
 import { useAccount } from 'wagmi';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { useRegisterUserMutation } from '@/services/user';
+import { useRegisterUserMutation } from '@/services/apis/user';
 import { User } from '@/common/types';
 
 const { width, height } = Dimensions.get('window');

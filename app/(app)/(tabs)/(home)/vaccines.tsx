@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card, Text, Avatar } from 'react-native-paper';
 import { CommonHeader } from '@/components/CommonHeader';
 import { useAccount } from 'wagmi';
-import { useGetUserByAddressQuery } from '@/services/user';
+import { useGetUserByAddressQuery } from '@/services/apis/user';
 
 const { width, height } = Dimensions.get('window');
 

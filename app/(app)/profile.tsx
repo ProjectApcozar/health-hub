@@ -4,8 +4,8 @@ import { Button, Card, Portal, Text, Appbar, Avatar } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAccount, useDisconnect } from "wagmi";
 import { useRouter } from "expo-router";
-import { updateUser } from "@/services/userAPI";
-import { useGetIsPatientQuery, useGetUserByAddressQuery, useUpdateUserMutation } from "@/services/user";
+import { updateUser } from "@/services/services/userService";
+import { useGetIsPatientQuery, useGetUserByAddressQuery, useUpdateUserMutation } from "@/services/apis/user";
 import { User } from "./register";
 
 export default function Profile() {

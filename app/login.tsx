@@ -5,7 +5,7 @@ import { useAccount } from "wagmi";
 import { useEffect } from "react";
 import { useIsPatient } from "@/hooks/useIsPatient";
 import { Button, Text } from "react-native-paper";
-import { useGetIsDoctorQuery, useGetIsPatientQuery } from "@/services/user";
+import { useGetIsDoctorQuery, useGetIsPatientQuery } from "@/services/apis/user";
 
 export default function Login() {
   const { open } = useAppKit()
