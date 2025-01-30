@@ -3,12 +3,10 @@ import { View, StyleSheet, TextInput, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card, Text, Button, Portal, Modal } from 'react-native-paper';
 import { CommonHeader } from '@/components/CommonHeader';
-import { useAccount, useWriteContract } from 'wagmi';
-import { healthhubABI } from '@/abis/HealthHubABI';
-import { contractAddress } from '@/constants/ContractAddress';
+import { useAccount } from 'wagmi';
 import { PermissionsList } from '@/components/PermissionsList';
-import { useQueryClient } from '@tanstack/react-query';
 import { useGetUserByAddressQuery } from '@/services/user';
+import { useCreatePermissionMutation } from '@/services/permission';
 
 const { width, height } = Dimensions.get('window');
 
@@ -16,29 +14,13 @@ export default function PatientPermissions() {
   const { address } = useAccount();
   const [inputValue, setInputValue] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
-  const { writeContract } = useWriteContract();
-  const queryClient = useQueryClient();
+  const [createPermission] = useCreatePermissionMutation();
+  const { data: user } = useGetUserByAddressQuery(address!);
 
-  if (!address) return null;
+  const handleSumbit = async (doctor: string) => {
+    if (!address) return;
 
-  const { data: user } = useGetUserByAddressQuery(address);
-
-  const handleSumbit = (comment: string) => {
-    writeContract(
-      {
-        abi: healthhubABI,
-        address: contractAddress,
-        functionName: 'authorizeDoctor',
-        account: address,
-        args: [comment],
-      },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['doctors'] });
-          setModalVisible(false);
-        },
-      }
-    );
+    await createPermission({address, permission: {patient: address, doctor}});
   };
 
   return (

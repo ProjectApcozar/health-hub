@@ -31,7 +31,6 @@ export default function Profile() {
   const [ updateUser ] = useUpdateUserMutation();
 
   useEffect(() => {
-    console.log(user);
     if (user) {
       setFields({
         phone_number: user.phone_number || "",

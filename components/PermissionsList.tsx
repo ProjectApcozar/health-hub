@@ -9,11 +9,11 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Avatar, Card, Dialog, Portal } from "react-native-paper";
-import { useGetAuthorizedDoctors } from "@/hooks/useGetAuthorizedDoctors";
 import { useAccount, useWriteContract } from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
 import { healthhubABI } from "@/abis/HealthHubABI";
 import { contractAddress } from "@/constants/ContractAddress";
+import { useGetPatientPermissionsQuery } from "@/services/permission";
 
 export const PermissionsList = () => {
   const { address } = useAccount();
@@ -23,9 +23,9 @@ export const PermissionsList = () => {
 
   if (!address) return null;
 
-  const { doctors } = useGetAuthorizedDoctors(address);
-  const dataList: any[] = doctors;
-  if (!doctors || doctors.length === 0) return null;
+  // const { doctors } = useGetPatientPermissionsQuery(address);
+  const dataList: any[] = [];
+  // if (!doctors || doctors.length === 0) return null;
   const queryClient = useQueryClient();
 
   const animations = dataList.map(() => new Animated.Value(1));
