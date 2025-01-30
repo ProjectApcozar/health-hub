@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card, Text, Avatar, Button } from 'react-native-paper';
 import { CommonHeader } from '@/components/CommonHeader';
 import { useAccount, useWriteContract } from 'wagmi';
-import { healthhubABI } from '@/abis/HealthHubABI';
+import { dataintegrityABI } from '@/abis/DataIntergrityABI';
 import { contractAddress } from '@/constants/ContractAddress';
 import { useGetUserByAddressQuery } from '@/services/user';
 
@@ -62,7 +62,7 @@ export default function DoctorPermissions() {
 
   const handleSumbit = async (comment: string) => {
     await writeContract({
-        abi: healthhubABI,
+        abi: dataintegrityABI,
         address: contractAddress,
         functionName: 'requestAccess',
         account: address,
