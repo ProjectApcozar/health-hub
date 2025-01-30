@@ -1,7 +1,7 @@
-import { User } from '@/app/(app)/register';
 import { decryptData } from '@/utils/crypto';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { registerUser, updateUser } from './userAPI';
+import { User } from '@/common/types';
 
 const baseUrl = process.env.EXPO_PUBLIC_API_URL as string;
 // https://redux-toolkit.js.org/rtk-query/usage/queries
@@ -18,7 +18,7 @@ export const usersApi = createApi({
             },
             invalidatesTags: (
                 _result, _error, { address }
-            ) => [{ type: 'User', id: address }],
+            ) => [{ type: 'User', address }],
         }),
         // READ
         getUserByAddress: builder.query<User, string>({

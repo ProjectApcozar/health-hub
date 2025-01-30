@@ -1,6 +1,6 @@
-import { User } from "@/app/(app)/register";
+import { User } from "@/common/types";
 import { encryptData, getAesKey } from "@/utils/crypto";
-import { getStoredKey, storeKey } from "@/utils/secureStore";
+import { getStoredKey, storeKey, storePassword } from "@/utils/secureStore";
 
 const baseURL = process.env.EXPO_PUBLIC_API_URL as string;
 const URL =`${baseURL}/users`;
@@ -8,13 +8,17 @@ const URL =`${baseURL}/users`;
 export const registerUser = async (user: Partial<User>, address: string) => {
     try {
         const aesKey = getAesKey(address);
+        const password = user.user_password;
+
+        if (password) {
+            await storePassword(password);
+        }
 
         if (aesKey) {
             await storeKey(aesKey);
         }
 
         const encryptedData = await encryptData(user, aesKey);
-        
         const encryptedUserWithKey = {
             ...encryptedData,
             cipher_key: aesKey,

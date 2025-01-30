@@ -8,3 +8,12 @@ export const getStoredKey = async (): Promise<string | null> => {
 export const storeKey = async (key: string) => {
     await setItemAsync('key', key);
 };
+
+export const storePassword = async (password: string) => {
+    await setItemAsync('password', password);
+};
+
+export const getPassword = async (): Promise<string | null> => {
+    const password = await getItemAsync('password');
+    return password;
+};
