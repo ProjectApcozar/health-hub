@@ -1,6 +1,6 @@
 import { Permission } from "@/common/types";
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { createPermission } from "./permissionAPI";
+import { createPermission } from "../services/permissionService";
 
 const baseUrl = process.env.EXPO_PUBLIC_API_URL as string;
 

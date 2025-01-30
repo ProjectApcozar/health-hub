@@ -5,8 +5,8 @@ import { Card, Text, Button, Portal, Modal } from 'react-native-paper';
 import { CommonHeader } from '@/components/CommonHeader';
 import { useAccount } from 'wagmi';
 import { PermissionsList } from '@/components/PermissionsList';
-import { useGetUserByAddressQuery } from '@/services/user';
-import { useCreatePermissionMutation } from '@/services/permission';
+import { useGetUserByAddressQuery } from '@/services/apis/user';
+import { useCreatePermissionMutation } from '@/services/apis/permission';
 
 const { width, height } = Dimensions.get('window');
 

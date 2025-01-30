@@ -6,7 +6,7 @@ import { CommonHeader } from '@/components/CommonHeader';
 import { useAccount, useWriteContract } from 'wagmi';
 import { dataintegrityABI } from '@/abis/DataIntergrityABI';
 import { contractAddress } from '@/constants/ContractAddress';
-import { useGetUserByAddressQuery } from '@/services/user';
+import { useGetUserByAddressQuery } from '@/services/apis/user';
 
 const { width, height } = Dimensions.get('window');
 

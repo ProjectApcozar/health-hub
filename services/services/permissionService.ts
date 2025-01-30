@@ -10,7 +10,7 @@ export const createPermission = async (permission: Partial<Permission>) => {
         const password = await getPassword();
 
         if (password) {
-            permission.user_password = password;
+            permission.patientPassword = password;
         }
 
         const response = await fetch(URL, {

@@ -4,7 +4,7 @@ import PatientPermissions from "./patient-permissions";
 import { useAccount } from "wagmi";
 
 import Login from "@/app/login";
-import { useGetIsDoctorQuery, useGetIsPatientQuery } from "@/services/user";
+import { useGetIsDoctorQuery, useGetIsPatientQuery } from "@/services/apis/user";
 
 export default function Permissions() {
   const { address } = useAccount();

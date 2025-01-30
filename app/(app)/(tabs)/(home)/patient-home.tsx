@@ -14,7 +14,7 @@ import Animated, {
 import { useRouter } from "expo-router";
 import { useAccount } from "wagmi";
 import { CommonHeader } from "@/components/CommonHeader";
-import { useGetUserByAddressQuery } from "@/services/user";
+import { useGetUserByAddressQuery } from "@/services/apis/user";
 
 const { width, height } = Dimensions.get("window");
 

@@ -13,7 +13,7 @@ import { useAccount, useWriteContract } from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
 import { dataintegrityABI } from "@/abis/DataIntergrityABI";
 import { contractAddress } from "@/constants/ContractAddress";
-import { useGetPatientPermissionsQuery } from "@/services/permission";
+import { useGetPatientPermissionsQuery } from "@/services/apis/permission";
 
 export const PermissionsList = () => {
   const { address } = useAccount();

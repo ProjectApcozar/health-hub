@@ -2,7 +2,7 @@ import DoctorHome from "./doctor-home";
 import PatientHome from "./patient-home";
 import Login from "@/app/login";
 import { useAccount } from "wagmi";
-import { useGetIsDoctorQuery, useGetIsPatientQuery } from "@/services/user";
+import { useGetIsDoctorQuery, useGetIsPatientQuery } from "@/services/apis/user";
 
 export default function Home() {
     const { address } = useAccount();
