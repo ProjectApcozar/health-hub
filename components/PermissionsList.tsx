@@ -11,7 +11,7 @@ import {
 import { Avatar, Card, Dialog, Portal } from "react-native-paper";
 import { useAccount, useWriteContract } from "wagmi";
 import { useQueryClient } from "@tanstack/react-query";
-import { healthhubABI } from "@/abis/HealthHubABI";
+import { dataintegrityABI } from "@/abis/DataIntergrityABI";
 import { contractAddress } from "@/constants/ContractAddress";
 import { useGetPatientPermissionsQuery } from "@/services/permission";
 
@@ -46,7 +46,7 @@ export const PermissionsList = () => {
 
   const handleDelete = () => {
     writeContract({
-      abi: healthhubABI,
+      abi: dataintegrityABI,
       address: contractAddress,
       functionName: "removeDoctor",
       account: address,
