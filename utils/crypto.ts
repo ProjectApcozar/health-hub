@@ -1,6 +1,6 @@
-import { User } from '@/app/(app)/register';
 import CryptoES from 'crypto-es';
 import { getStoredKey } from './secureStore';
+import { User } from '@/common/types';
 
 const generateSalt = () => {
     return CryptoES.lib.WordArray.random(32).toString();

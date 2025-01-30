@@ -1,22 +1,29 @@
-export const healthhubABI = [
+export const dataintegrityABI = [
 	{
 		"inputs": [],
-		"name": "DoctorAlreadyRegistered",
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "OwnableInvalidOwner",
 		"type": "error"
 	},
 	{
-		"inputs": [],
-		"name": "NotADoctor",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "NotAPatient",
-		"type": "error"
-	},
-	{
-		"inputs": [],
-		"name": "PatientAlreadyRegistered",
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "OwnableUnauthorizedAccount",
 		"type": "error"
 	},
 	{
@@ -33,6 +40,12 @@ export const healthhubABI = [
 				"internalType": "address",
 				"name": "doctor",
 				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "timestamp",
+				"type": "uint256"
 			}
 		],
 		"name": "AccessGranted",
@@ -52,9 +65,15 @@ export const healthhubABI = [
 				"internalType": "address",
 				"name": "doctor",
 				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "timestamp",
+				"type": "uint256"
 			}
 		],
-		"name": "AccessRequest",
+		"name": "AccessRequested",
 		"type": "event"
 	},
 	{
@@ -71,66 +90,165 @@ export const healthhubABI = [
 				"internalType": "address",
 				"name": "doctor",
 				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "timestamp",
+				"type": "uint256"
 			}
 		],
 		"name": "AccessRevoked",
 		"type": "event"
 	},
 	{
+		"anonymous": false,
 		"inputs": [
 			{
+				"indexed": true,
+				"internalType": "bytes32",
+				"name": "dataHash",
+				"type": "bytes32"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "timestamp",
+				"type": "uint256"
+			},
+			{
+				"indexed": true,
 				"internalType": "address",
-				"name": "doctor",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "updatedBy",
 				"type": "address"
 			}
 		],
-		"name": "authorizeDoctor",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
+		"name": "DataHashUpdated",
+		"type": "event"
 	},
 	{
+		"anonymous": false,
 		"inputs": [
 			{
+				"indexed": true,
 				"internalType": "address",
 				"name": "doctor",
 				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "timestamp",
+				"type": "uint256"
 			}
 		],
-		"name": "registerDoctor",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
+		"name": "DoctorAdded",
+		"type": "event"
 	},
 	{
+		"anonymous": false,
 		"inputs": [
 			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "previousOwner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "OwnershipTransferred",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
 				"internalType": "address",
 				"name": "patient",
 				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "timestamp",
+				"type": "uint256"
 			}
 		],
-		"name": "registerPatient",
+		"name": "PatientAdded",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_doctor",
+				"type": "address"
+			}
+		],
+		"name": "addDoctor",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_patient",
+				"type": "address"
+			}
+		],
+		"name": "addPatient",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_patient",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_doctor",
+				"type": "address"
+			}
+		],
+		"name": "grantAccess",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
 		"inputs": [],
-		"name": "registerPatientSelf",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
+		"name": "owner",
+		"outputs": [
 			{
 				"internalType": "address",
-				"name": "doctor",
+				"name": "",
 				"type": "address"
 			}
 		],
-		"name": "removeDoctor",
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "renounceOwnership",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -139,20 +257,12 @@ export const healthhubABI = [
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "patient",
+				"name": "_patient",
 				"type": "address"
-			}
-		],
-		"name": "removePatient",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
+			},
 			{
 				"internalType": "address",
-				"name": "patient",
+				"name": "_doctor",
 				"type": "address"
 			}
 		],
@@ -165,11 +275,16 @@ export const healthhubABI = [
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "doctor",
+				"name": "_patient",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_doctor",
 				"type": "address"
 			}
 		],
-		"name": "revokeDoctorAuthorization",
+		"name": "revokeAccess",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -178,38 +293,36 @@ export const healthhubABI = [
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "doctor",
+				"name": "newOwner",
 				"type": "address"
 			}
 		],
-		"name": "isDoctor",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
 		"inputs": [
 			{
+				"internalType": "string",
+				"name": "_orbitCID",
+				"type": "string"
+			},
+			{
 				"internalType": "address",
-				"name": "patient",
+				"name": "_owner",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_updatedBy",
 				"type": "address"
 			}
 		],
-		"name": "isPatient",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
+		"name": "updateDataHash",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ]
