@@ -28,7 +28,7 @@ export const permissionsApi = createApi({
         }),
         // DELETE
         deletePermission: builder.mutation<Permission, { address: string; permission: Partial<Permission> }>({
-            query: (permission) => ({
+            query: ({ permission }) => ({
                 url: `permissions`,
                 method: "DELETE",
                 body: permission,

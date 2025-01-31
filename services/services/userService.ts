@@ -8,7 +8,7 @@ const URL =`${baseURL}/users`;
 export const registerUser = async (user: Partial<User>, address: string) => {
     try {
         const aesKey = getAesKey(address);
-        const password = user.userPassword;
+        const password = user.encryptedUserPassword;
 
         if (password) {
             await storePassword(password);

@@ -20,7 +20,8 @@ export default function PatientPermissions() {
   const handleSumbit = async (doctor: string) => {
     if (!address) return;
 
-    await createPermission({address, permission: {patient: address, doctor}});
+    await createPermission({address, permission: {patientId: address, doctorId: doctor}});
+    setModalVisible(false);
   };
 
   return (

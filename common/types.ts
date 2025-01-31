@@ -3,7 +3,7 @@ export type User = {
     name: string;
     dateOfBirth: string;
     phoneNumber: string;
-    userPassword: string;
+    encryptedUserPassword: string;
     dni: string;
     hospital: string;
     residence: string;
@@ -11,7 +11,7 @@ export type User = {
 };
 
 export type Permission = {
-    patient: string;
-    doctor: string;
+    patientId: string;
+    doctorId: string;
     patientPassword: string;
 };
