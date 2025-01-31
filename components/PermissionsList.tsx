@@ -9,25 +9,20 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Avatar, Card, Dialog, Portal } from "react-native-paper";
-import { useAccount, useWriteContract } from "wagmi";
-import { useQueryClient } from "@tanstack/react-query";
-import { dataintegrityABI } from "@/abis/DataIntergrityABI";
-import { contractAddress } from "@/constants/ContractAddress";
-import { useGetPatientPermissionsQuery } from "@/services/apis/permission";
+import { useAccount } from "wagmi";
+import { useDeletePermissionMutation, useGetPatientPermissionsQuery } from "@/services/apis/permission";
 
 export const PermissionsList = () => {
   const { address } = useAccount();
   const [isDialogVisible, setIsDialogVisible] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState<any>(null); // Para almacenar el doctor seleccionado
-  const { writeContract } = useWriteContract();
+  const [ deletePermission ] = useDeletePermissionMutation();
 
   if (!address) return null;
+  const { data: doctors } = useGetPatientPermissionsQuery(address);
+  if (!doctors || doctors.length === 0) return null;
 
-  // const { doctors } = useGetPatientPermissionsQuery(address);
-  const dataList: any[] = [];
-  // if (!doctors || doctors.length === 0) return null;
-  const queryClient = useQueryClient();
-
+  const dataList: any[] = doctors;
   const animations = dataList.map(() => new Animated.Value(1));
 
   const handlePressIn = (index: number) => {
@@ -45,20 +40,8 @@ export const PermissionsList = () => {
   };
 
   const handleDelete = () => {
-    writeContract({
-      abi: dataintegrityABI,
-      address: contractAddress,
-      functionName: "removeDoctor",
-      account: address,
-      args: [selectedDoctor],
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['doctors'] });
-        setIsDialogVisible(false);
-        setSelectedDoctor(null);      
-      },
-    })
+    deletePermission({address, permission: {patientId: address, doctorId: selectedDoctor.id }})
+    setIsDialogVisible(false);
   };
 
   return (
@@ -89,13 +72,13 @@ export const PermissionsList = () => {
                 />
                 <View style={styles.itemDetails}>
                   <Text style={styles.itemTitle}>
-                    {item.title || `Doctor ${index}`}
+                    {item.name || `Doctor ${index}`}
                   </Text>
                   <Text style={styles.itemSubtitle}>
-                    {item.category || `Category ${index}`}
+                    {item.type || `Category ${index}`}
                   </Text>
                 </View>
-                <Text style={styles.itemDate}>{item.date || "11/01/2025"}</Text>
+                <Text style={styles.itemDate}>{item.permissionDate || "11/01/2025"}</Text>
               </Animated.View>
             </Pressable>
           </View>

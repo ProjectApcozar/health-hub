@@ -6,7 +6,7 @@ import { useAccount, useDisconnect } from "wagmi";
 import { useRouter } from "expo-router";
 import { updateUser } from "@/services/services/userService";
 import { useGetIsPatientQuery, useGetUserByAddressQuery, useUpdateUserMutation } from "@/services/apis/user";
-import { User } from "./register";
+import { User } from "@/common/types";
 
 export default function Profile() {
   const router = useRouter();
@@ -33,8 +33,8 @@ export default function Profile() {
   useEffect(() => {
     if (user) {
       setFields({
-        phone_number: user.phone_number || "",
-        date_of_birth: user.date_of_birth || "",
+        phone_number: user.phoneNumber || "",
+        date_of_birth: user.dateOfBirth || "",
         dni: user.dni || "",
         hospital: user.hospital || "",
         residence: user.residence || "",

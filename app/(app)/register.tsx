@@ -64,34 +64,34 @@ export default function Register() {
                 <Text style={styles.label}>Edad</Text>
                 <TextInput
                   style={styles.input}
-                  {...register('date_of_birth', { required: 'La edad es obligatoria' })}
-                  onChangeText={(text) => setValue('date_of_birth', text)}
+                  {...register('dateOfBirth', { required: 'La edad es obligatoria' })}
+                  onChangeText={(text) => setValue('dateOfBirth', text)}
                   placeholder="Introduce tu edad"
                   placeholderTextColor="#777"
                 />
-                {errors.date_of_birth && <Text style={styles.error}>{errors.date_of_birth.message}</Text>}
+                {errors.dateOfBirth && <Text style={styles.error}>{errors.dateOfBirth.message}</Text>}
                 <Text style={styles.label}>Teléfono</Text>
                 <TextInput
                   style={styles.input}
                   keyboardType="phone-pad"
-                  {...register('phone_number', {
+                  {...register('phoneNumber', {
                     required: 'El teléfono es obligatorio',
                     pattern: {
                       value: /^\d+$/,
                       message: 'El teléfono debe contener solo números',
                     },
                   })}
-                  onChangeText={(text) => setValue('phone_number', text)}
+                  onChangeText={(text) => setValue('phoneNumber', text)}
                   placeholder="Introduce tu teléfono"
                   placeholderTextColor="#777"
                 />
-                {errors.phone_number && <Text style={styles.error}>{errors.phone_number.message}</Text>}
+                {errors.phoneNumber && <Text style={styles.error}>{errors.phoneNumber.message}</Text>}
                 <Text style={styles.label}>Contraseña</Text>
                 <TextInput
                   style={styles.input}
                   secureTextEntry
-                  {...register('user_password', { required: 'La contraseña es obligatoria' })}
-                  onChangeText={(text) => setValue('user_password', text)}
+                  {...register('encryptedUserPassword', { required: 'La contraseña es obligatoria' })}
+                  onChangeText={(text) => setValue('encryptedUserPassword', text)}
                   placeholder="Introduce tu contraseña"
                   passwordRules="minlength: 8; required: lower; required: upper; required: digit; required: special;"
                   placeholderTextColor="#777"
