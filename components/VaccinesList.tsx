@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Animated, StyleSheet, Dimensions, View } from "react-native";
 import { Avatar, Card, Text, TouchableRipple, Divider } from "react-native-paper";
-import { FloatingModal } from "./FloatingModal"; // Importar el modal
+import { VaccineFloatingModal } from "./VaccineFloatingModal"; // Importar el modal
 import { useAccount } from "wagmi";
 import { useGetVaccinesByAddressQuery } from "@/services/apis/vaccine";
 
@@ -12,8 +12,6 @@ export const VaccinesList = () => {
   const [isModalVisible, setModalVisible] = useState(false);
   const { data: vaccines } = useGetVaccinesByAddressQuery(address!);
 
-  console.log("inhouse");
-  console.log(vaccines);
   if (!address || !Array.isArray(vaccines) || vaccines.length === 0) return null;
   const animations = vaccines.map(() => new Animated.Value(1));
 
@@ -77,7 +75,7 @@ export const VaccinesList = () => {
           </TouchableRipple>
         </Card.Content>
       </Card>
-      <FloatingModal visible={isModalVisible} onClose={toggleModal} data={vaccines} />
+      <VaccineFloatingModal visible={isModalVisible} onClose={toggleModal} data={vaccines} />
     </View>
   );
 };

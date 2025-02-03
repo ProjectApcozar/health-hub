@@ -7,7 +7,6 @@ import {
   Modal,
 } from "react-native";
 import { Avatar, Text, TouchableRipple, IconButton } from "react-native-paper";
-import { IconSource } from "react-native-paper/lib/typescript/components/Icon";
 
 const { height } = Dimensions.get("window");
 
@@ -20,8 +19,7 @@ interface FloatingModalProps {
 // Función para agrupar los datos por fecha
 const groupByDate = (data: any[]) => {
   return data.reduce((acc, item) => {
-    const date = item.applicationDate;
-    (acc[date] = acc[date] || []).push(item);
+    (acc[item.date] = acc[item.date] || []).push(item);
     return acc;
   }, {} as Record<string, any[]>);
 };
@@ -36,7 +34,7 @@ const formatDate = (dateString: string) => {
   return `${day} de ${months[month - 1]}, ${year}`;
 };
 
-export const FloatingModal = ({ visible, data, onClose }: FloatingModalProps) => {
+export const MedicationFloatingModal = ({ visible, data, onClose }: FloatingModalProps) => {
   const groupedData = groupByDate(data);
 
   return (
@@ -48,12 +46,12 @@ export const FloatingModal = ({ visible, data, onClose }: FloatingModalProps) =>
             size={24}
             onPress={onClose}
           />
-          <Text style={styles.modalTitle}>Todas las Vacunas</Text>
+          <Text style={styles.modalTitle}>Todos los medicamentos</Text>
         </View>
 
         <ScrollView contentContainerStyle={styles.modalScrollContent}>
-          {Object.keys(groupedData).map((date, index) => (
-            <View key={index}>
+          {Object.keys(groupedData).map((date) => (
+            <View key={date}>
               <Text style={styles.dateLabel}>{formatDate(date)}</Text>
               {groupedData[date].map((item: any) => (
                 <TouchableRipple key={item.name} rippleColor="rgba(0, 0, 0, 0.1)" borderless>

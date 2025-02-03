@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Animated, StyleSheet, Dimensions, View } from "react-native";
 import { Avatar, Card, Text, TouchableRipple, Divider } from "react-native-paper";
-import { FloatingModal } from "./FloatingModal"; // Importar el modal
+import { MedicationFloatingModal } from "./MedicationFloatingModal";
 
 const { height } = Dimensions.get("window");
 
@@ -93,7 +93,7 @@ export const MedicationList = () => {
           </TouchableRipple>
         </Card.Content>
       </Card>
-      <FloatingModal visible={isModalVisible} onClose={toggleModal} data={dataList} />
+      <MedicationFloatingModal visible={isModalVisible} onClose={toggleModal} data={dataList} />
     </View>
   );
 };

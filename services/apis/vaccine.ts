@@ -27,7 +27,6 @@ export const vaccinesApi = createApi({
                 const decryptedData = [];
                 for (const item of response) {
                     const decryptedItem = await decryptData(item);
-                    console.log(decryptedItem)
                     decryptedData.push(decryptedItem);
                 }
                 return decryptedData; 
