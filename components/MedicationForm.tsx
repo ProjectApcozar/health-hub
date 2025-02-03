@@ -7,14 +7,9 @@ import {
   TextInput,
 } from "react-native";
 import { SubmitHandler, useForm } from "react-hook-form";
-
-export type Medication = {
-  name: string;
-  dosage: string;
-  frequency: string;
-  duration: string;
-  notes: string;
-};
+import { Medication } from "@/common/types";
+import { useCreateMedicationMutation } from "@/services/apis/medication";
+import { useAccount } from "wagmi";
 
 export const MedicationForm = ({
   visible,
@@ -29,9 +24,16 @@ export const MedicationForm = ({
     handleSubmit,
     formState: { errors },
   } = useForm<Medication>();
+  const [createMedication] = useCreateMedicationMutation();
+  const { address } = useAccount();
 
-  const onSubmit: SubmitHandler<Medication> = (data) => {
-    console.log("Datos del medicamento:", data);
+  const onSubmit: SubmitHandler<Medication> = async (medication) => {
+    console.log("Datos del medicamento:", medication);
+    if (!address) return;
+    await createMedication({
+      address,
+      medication
+    });
     onClose(); // Cierra el modal al guardar
   };
 
@@ -73,6 +75,12 @@ export const MedicationForm = ({
               placeholder="Duración (e.g., 7 días)"
               {...register("duration")}
               onChangeText={(text) => setValue("duration", text)}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Fecha de inicio"
+              {...register("startDate")}
+              onChangeText={(text) => setValue("startDate", text)}
             />
             <TextInput
               style={styles.input}

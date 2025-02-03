@@ -28,7 +28,6 @@ export const VaccinesForm = ({
   const { address } = useAccount();
 
   const onSubmit: SubmitHandler<Vaccine> = async (vaccine) => {
-    console.log("Datos de la vacuna:", vaccine);
     if (!address) return;
     await createVaccine({ 
       address, 

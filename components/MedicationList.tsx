@@ -1,37 +1,20 @@
 import React, { useState } from "react";
 import { Animated, StyleSheet, Dimensions, View } from "react-native";
-import { Avatar, Card, Text, TouchableRipple, Divider } from "react-native-paper";
+import { Avatar, Card, Text, TouchableRipple } from "react-native-paper";
 import { MedicationFloatingModal } from "./MedicationFloatingModal";
+import { useAccount } from "wagmi";
+import { useGetMedicationsByAddressQuery } from "@/services/apis/medication";
 
 const { height } = Dimensions.get("window");
 
-const dataList = [
-  {
-    id: "1",
-    title: "Diabetes Mellitus",
-    date: "15/03/2020",
-    category: "Endocrinología",
-    icon: "clipboard-text-outline",
-  },
-  {
-    id: "2",
-    title: "Hipertensión Arterial",
-    date: "16/03/2020",
-    category: "Cardiología",
-    icon: "heart-outline",
-  },
-  {
-    id: "3",
-    title: "Vacunas Completas",
-    date: "20/01/2023",
-    category: "Inmunología",
-    icon: "needle",
-  },
-];
-
 export const MedicationList = () => {
+  const { address } = useAccount();
   const [isModalVisible, setModalVisible] = useState(false);
-  const animations = dataList.map(() => new Animated.Value(1));
+  const { data: medications } = useGetMedicationsByAddressQuery(address!);
+  console.log(medications);
+  if (!address || !Array.isArray(medications) || medications.length === 0) return null;
+
+  const animations = medications.map(() => new Animated.Value(1));
 
   const handlePressIn = (index: number) => {
     Animated.spring(animations[index], {
@@ -53,10 +36,10 @@ export const MedicationList = () => {
     <View>
       <Card style={styles.groupedCard}>
         <Card.Content style={styles.cardContent}>
-          {dataList.map((item, index) => (
-            <View key={item.id}>
+          {medications.map((item, index) => (
+            <View key={index}>
               <TouchableRipple
-                onPress={() => console.log(`Clicked on ${item.title}`)}
+                onPress={() => console.log(`Clicked on ${item.name}`)}
                 onPressIn={() => handlePressIn(index)}
                 onPressOut={() => handlePressOut(index)}
                 rippleColor="rgba(0, 0, 0, 0.1)"
@@ -71,15 +54,15 @@ export const MedicationList = () => {
                 >
                   <Avatar.Icon
                     size={40}
-                    icon={item.icon}
+                    icon="pill"
                     style={styles.icon}
                     color="#fff"
                   />
                   <View style={styles.itemDetails}>
-                    <Text style={styles.itemTitle}>{item.title}</Text>
-                    <Text style={styles.itemSubtitle}>{item.category}</Text>
+                    <Text style={styles.itemTitle}>{item.name}</Text>
+                    <Text style={styles.itemSubtitle}>{`${item.startDate} - ${item.duration} days`}</Text>
                   </View>
-                  <Text style={styles.itemAmount}>{item.date}</Text>
+                  <Text style={styles.itemAmount}>{item.createdAt}</Text>
                 </Animated.View>
               </TouchableRipple>
             </View>
@@ -93,7 +76,7 @@ export const MedicationList = () => {
           </TouchableRipple>
         </Card.Content>
       </Card>
-      <MedicationFloatingModal visible={isModalVisible} onClose={toggleModal} data={dataList} />
+      <MedicationFloatingModal visible={isModalVisible} onClose={toggleModal} data={medications} />
     </View>
   );
 };
