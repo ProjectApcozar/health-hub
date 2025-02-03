@@ -11,10 +11,10 @@ export const MedicationList = () => {
   const { address } = useAccount();
   const [isModalVisible, setModalVisible] = useState(false);
   const { data: medications } = useGetMedicationsByAddressQuery(address!);
-  console.log(medications);
   if (!address || !Array.isArray(medications) || medications.length === 0) return null;
 
   const animations = medications.map(() => new Animated.Value(1));
+  const displayedMedications = medications.length < 4 ? medications : medications.slice(0, 3);
 
   const handlePressIn = (index: number) => {
     Animated.spring(animations[index], {
@@ -36,7 +36,7 @@ export const MedicationList = () => {
     <View>
       <Card style={styles.groupedCard}>
         <Card.Content style={styles.cardContent}>
-          {medications.map((item, index) => (
+          {displayedMedications.map((item, index) => (
             <View key={index}>
               <TouchableRipple
                 onPress={() => console.log(`Clicked on ${item.name}`)}
