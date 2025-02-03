@@ -14,6 +14,7 @@ export const VaccinesList = () => {
 
   if (!address || !Array.isArray(vaccines) || vaccines.length === 0) return null;
   const animations = vaccines.map(() => new Animated.Value(1));
+  const displayedVaccines = vaccines.length < 4 ? vaccines : vaccines.slice(0, 3);
 
   const handlePressIn = (index: number) => {
     Animated.spring(animations[index], {
@@ -35,7 +36,7 @@ export const VaccinesList = () => {
     <View>
       <Card style={styles.groupedCard}>
         <Card.Content style={styles.cardContent}>
-          {vaccines.map((item, index) => (
+          {displayedVaccines.map((item, index) => (
             <View key={index}>
               <TouchableRipple
                 onPress={() => console.log(`Clicked on ${item.name}`)}

@@ -23,7 +23,9 @@ export const PermissionsList = () => {
   if (!doctors || doctors.length === 0) return null;
 
   const dataList: any[] = doctors;
-  const animations = dataList.map(() => new Animated.Value(1));
+  const displayedDoctors = dataList.length < 4 ? dataList : dataList.slice(0, 3);
+
+  const animations = doctors.map(() => new Animated.Value(1));
 
   const handlePressIn = (index: number) => {
     Animated.spring(animations[index], {
@@ -47,7 +49,7 @@ export const PermissionsList = () => {
   return (
     <Card style={styles.groupedCard}>
       <Card.Content>
-        {dataList.map((item, index) => (
+        {displayedDoctors.map((item, index) => (
           <View key={index}>
             <Pressable
               onPress={() => {
