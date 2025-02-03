@@ -8,6 +8,8 @@ import {
 } from "react-native";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Vaccine } from "@/common/types";
+import { useCreateVaccineMutation } from "@/services/apis/vaccine";
+import { useAccount } from "wagmi";
 
 export const VaccinesForm = ({
   visible,
@@ -22,10 +24,17 @@ export const VaccinesForm = ({
     handleSubmit,
     formState: { errors },
   } = useForm<Vaccine>();
+  const [createVaccine] = useCreateVaccineMutation();
+  const { address } = useAccount();
 
-  const onSubmit: SubmitHandler<Vaccine> = (data) => {
-    console.log("Datos de la vacuna:", data);
-    onClose(); // Cierra el modal al guardar
+  const onSubmit: SubmitHandler<Vaccine> = async (vaccine) => {
+    console.log("Datos de la vacuna:", vaccine);
+    if (!address) return;
+    await createVaccine({ 
+      address, 
+      vaccine,
+    });
+    onClose();
   };
 
   return (
@@ -51,15 +60,15 @@ export const VaccinesForm = ({
             <TextInput
               style={styles.input}
               placeholder="Hospital"
-              {...register("hospital", { required: "El hospital es obligatorio" })}
-              onChangeText={(text) => setValue("hospital", text)}
+              {...register("healthCenter", { required: "El hospital es obligatorio" })}
+              onChangeText={(text) => setValue("healthCenter", text)}
             />
-            {errors.hospital && <Text style={styles.error}>{errors.hospital.message}</Text>}
+            {errors.healthCenter && <Text style={styles.error}>{errors.healthCenter.message}</Text>}
             <TextInput
               style={styles.input}
               placeholder="Fecha"
-              {...register("date")}
-              onChangeText={(text) => setValue("date", text)}
+              {...register("applicationDate")}
+              onChangeText={(text) => setValue("applicationDate", text)}
             />
             <TextInput
               style={styles.input}

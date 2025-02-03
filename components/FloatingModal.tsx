@@ -20,7 +20,8 @@ interface FloatingModalProps {
 // Función para agrupar los datos por fecha
 const groupByDate = (data: any[]) => {
   return data.reduce((acc, item) => {
-    (acc[item.date] = acc[item.date] || []).push(item);
+    const date = item.applicationDate;
+    (acc[date] = acc[date] || []).push(item);
     return acc;
   }, {} as Record<string, any[]>);
 };
@@ -51,11 +52,11 @@ export const FloatingModal = ({ visible, data, onClose }: FloatingModalProps) =>
         </View>
 
         <ScrollView contentContainerStyle={styles.modalScrollContent}>
-          {Object.keys(groupedData).map((date) => (
-            <View key={date}>
+          {Object.keys(groupedData).map((date, index) => (
+            <View key={index}>
               <Text style={styles.dateLabel}>{formatDate(date)}</Text>
-              {groupedData[date].map((item: { id: React.Key | null | undefined; icon: IconSource; title: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; category: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; amount: any; }) => (
-                <TouchableRipple key={item.id} rippleColor="rgba(0, 0, 0, 0.1)" borderless>
+              {groupedData[date].map((item: any) => (
+                <TouchableRipple key={item.name} rippleColor="rgba(0, 0, 0, 0.1)" borderless>
                   <View style={styles.cardItem}>
                     <View style={styles.listItem}>
                       <Avatar.Icon size={40} icon={item.icon} style={styles.icon} color="#fff" />

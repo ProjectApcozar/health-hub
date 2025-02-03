@@ -18,7 +18,8 @@ export type Permission = {
 
 export type Vaccine = {
     name: string;
-    hospital: string;
-    date: string;
+    healthCenter: string;
+    applicationDate: string;
     age: string;
+    doctorId: string;
 }
