@@ -2,12 +2,10 @@ import React, { useState } from "react";
 import {
   View,
   StyleSheet,
-  Dimensions,
-  Pressable,
-  Animated
+  Dimensions
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Card, Text, Avatar, Button } from "react-native-paper";
+import { Card, Text, Button } from "react-native-paper";
 import { CommonHeader } from "@/components/CommonHeader";
 import { useAccount } from "wagmi";
 import { MedicationForm } from "@/components/MedicationForm";
@@ -16,51 +14,12 @@ import { MedicationList } from "@/components/MedicationList";
 
 const { width, height } = Dimensions.get("window");
 
-const dataList = [
-  {
-    id: "1",
-    title: "Diabetes Mellitus",
-    date: "15/03/2020",
-    category: "Endocrinología",
-    icon: "clipboard-text-outline",
-  },
-  {
-    id: "2",
-    title: "Hipertensión Arterial",
-    date: "10/07/2018",
-    category: "Cardiología",
-    icon: "heart-outline",
-  },
-  {
-    id: "3",
-    title: "Vacunas Completas",
-    date: "20/01/2023",
-    category: "Inmunología",
-    icon: "needle",
-  },
-];
-
 export default function Medication() {
   const { address } = useAccount();
   if (!address) return null;
 
   const { data: user } = useGetUserByAddressQuery(address);
   const [modalVisible, setModalVisible] = useState(false);
-  const animations = dataList.map(() => new Animated.Value(1));
-
-  const handlePressIn = (index: number) => {
-    Animated.spring(animations[index], {
-      toValue: 0.95,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const handlePressOut = (index: number) => {
-    Animated.spring(animations[index], {
-      toValue: 1,
-      useNativeDriver: true,
-    }).start();
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -106,13 +65,6 @@ const styles = StyleSheet.create({
     marginTop: height * 0.1,
     justifyContent: "center",
   },
-  groupedCard: {
-    borderRadius: 15,
-    backgroundColor: "#fff",
-    elevation: 2,
-    width: "100%",
-    marginBottom: height * 0.02,
-  },
   cardTitle: {
     fontSize: height * 0.025,
     fontWeight: "bold",
@@ -133,35 +85,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     textAlign: "center",
-  },
-  listItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 10,
-    borderRadius: 10,
-    backgroundColor: "#fff",
-  },
-  icon: {
-    backgroundColor:
-     "#62CCC7",
-    marginRight: 16,
-  },
-  itemDetails: {
-    flex: 1,
-  },
-  itemTitle: {
-    fontSize: height * 0.02,
-    fontWeight: "600",
-    color: "#333",
-  },
-  itemSubtitle: {
-    fontSize: height * 0.018,
-    color: "#777",
-    marginTop: 4,
-  },
-  itemDate: {
-    fontSize: height * 0.018,
-    color: "#333",
-    fontWeight: "600",
-  },
+  }
 });

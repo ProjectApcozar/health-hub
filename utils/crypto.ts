@@ -26,13 +26,17 @@ export const encryptData = async (data: any, aesKey: string): Promise<any> => {
 export const decryptData = async (encryptedData: any): Promise<any> => {
     const aesKey = await getStoredKey();
     if (!aesKey) return encryptedData;
-
     const decryptedData: Partial<any> = {};
     for (const [key, value] of Object.entries(encryptedData)) {
-        if (typeof value === 'string') {
-            const decryptedBytes = CryptoES.AES.decrypt(value, aesKey);
-            decryptedData[key as keyof User] = decryptedBytes.toString(CryptoES.enc.Utf8);
-        };
+        try {
+            if (typeof value === 'string') {
+                const decryptedBytes = CryptoES.AES.decrypt(value, aesKey);
+                decryptedData[key as keyof User] = decryptedBytes.toString(CryptoES.enc.Utf8);
+            };
+        } catch (error) {
+            console.log(key, 'in error', error);
+        }
+       
     };
 
     return decryptedData;

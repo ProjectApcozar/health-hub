@@ -1,11 +1,11 @@
-import { Vaccine } from "@/common/types";
+import { Medication, Vaccine } from "@/common/types";
 import { encryptData } from "@/utils/crypto";
 import { getStoredKey } from "@/utils/secureStore";
 
 const baseURL = process.env.EXPO_PUBLIC_API_URL as string;
-const URL = `${baseURL}/vaccines`;
+const URL = `${baseURL}/medications`;
 
-export const createVaccine = async (vaccine: Partial<Vaccine>, address: string) => {
+export const createMedication = async (medication: Partial<Medication>, address: string) => {
     try {
         const aesKey = await getStoredKey();
 
@@ -13,15 +13,15 @@ export const createVaccine = async (vaccine: Partial<Vaccine>, address: string) 
             throw new Error(`No existe aesKey: ${aesKey}`);
         }
 
-        const vaccineWithDate = {
-            ...vaccine,
+        const medicationWithDate = {
+            ...medication,
             createdAt: Date.now().toString(),
         }
 
-        const encryptedVaccine = await encryptData(vaccineWithDate, aesKey);
+        const encryptedMedication = await encryptData(medicationWithDate, aesKey);
         
-        const vaccineWithPatient = {
-            ...encryptedVaccine,
+        const medicationWithPatient = {
+            ...encryptedMedication,
             patientId: address,
             doctorId: address,
         };
@@ -31,7 +31,7 @@ export const createVaccine = async (vaccine: Partial<Vaccine>, address: string) 
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(vaccineWithPatient),
+            body: JSON.stringify(medicationWithPatient),
         });
 
         if (!response.ok) {
@@ -40,7 +40,7 @@ export const createVaccine = async (vaccine: Partial<Vaccine>, address: string) 
 
         return response.json();
     } catch (error) {
-        console.log('Error al registrar la vacuna', error);
+        console.log('Error al registrar la medicación', error);
         throw error;
     }
 };

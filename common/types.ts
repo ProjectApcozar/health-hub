@@ -22,4 +22,14 @@ export type Vaccine = {
     applicationDate: string;
     age: string;
     doctorId: string;
-}
+};
+
+export type Medication = {
+    name: string;
+    dosage: string;
+    frequency: string;
+    startDate: string;
+    duration: string;
+    notes: string;
+    createdAt: string;
+};
