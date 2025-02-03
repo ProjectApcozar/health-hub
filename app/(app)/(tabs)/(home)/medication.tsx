@@ -12,6 +12,7 @@ import { CommonHeader } from "@/components/CommonHeader";
 import { useAccount } from "wagmi";
 import { MedicationForm } from "@/components/MedicationForm";
 import { useGetUserByAddressQuery } from "@/services/apis/user";
+import { MedicationList } from "@/components/MedicationList";
 
 const { width, height } = Dimensions.get("window");
 
@@ -79,42 +80,7 @@ export default function Medication() {
           Añadir Medicamentos
         </Button>
         <MedicationForm visible={modalVisible} onClose={() => setModalVisible(false)} />
-
-        <Card style={styles.groupedCard}>
-          <Card.Content>
-            {dataList.map((item, index) => (
-              <View key={item.id}>
-                <Pressable
-                  onPress={() => console.log(`Clicked on ${item.title}`)}
-                  onPressIn={() => handlePressIn(index)}
-                  onPressOut={() => handlePressOut(index)}
-                  style={({ pressed }) => [
-                    { opacity: pressed ? 0.8 : 1 },
-                  ]}
-                >
-                  <Animated.View
-                    style={[
-                      styles.listItem,
-                      { transform: [{ scale: animations[index] }] },
-                    ]}
-                  >
-                    <Avatar.Icon
-                      size={40}
-                      icon={item.icon}
-                      style={styles.icon}
-                      color="#fff"
-                    />
-                    <View style={styles.itemDetails}>
-                      <Text style={styles.itemTitle}>{item.title}</Text>
-                      <Text style={styles.itemSubtitle}>{item.category}</Text>
-                    </View>
-                    <Text style={styles.itemDate}>{item.date}</Text>
-                  </Animated.View>
-                </Pressable>
-              </View>
-            ))}
-          </Card.Content>
-        </Card>
+        <MedicationList />
       </View>
     </SafeAreaView>
   );
