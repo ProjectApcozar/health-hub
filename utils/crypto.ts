@@ -29,7 +29,6 @@ export const decryptData = async (encryptedData: any): Promise<any> => {
 
     const decryptedData: Partial<any> = {};
     for (const [key, value] of Object.entries(encryptedData)) {
-        console.log(key, value);
         if (typeof value === 'string') {
             const decryptedBytes = CryptoES.AES.decrypt(value, aesKey);
             decryptedData[key as keyof User] = decryptedBytes.toString(CryptoES.enc.Utf8);
