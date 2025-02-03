@@ -3,7 +3,6 @@ import { Image, View, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { useAccount } from "wagmi";
 import { useEffect } from "react";
-import { useIsPatient } from "@/hooks/useIsPatient";
 import { Button, Text } from "react-native-paper";
 import { useGetIsDoctorQuery, useGetIsPatientQuery } from "@/services/apis/user";
 
