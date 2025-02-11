@@ -1,152 +1,157 @@
-import React from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-} from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-} from "react-native-reanimated";
-import { useRouter } from "expo-router";
-import { useAccount } from "wagmi";
-import { CommonHeader } from "@/components/CommonHeader";
-import { useGetUserByAddressQuery } from "@/services/apis/user";
+import React, { useState } from 'react';
+import { View, StyleSheet, Dimensions, TextInput } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Card, Text, Button, Portal, Modal } from 'react-native-paper';
+import { CommonHeader } from '@/components/CommonHeader';
+import { useAccount } from 'wagmi';
+import { useGetDoctorByAddressQuery } from '@/services/apis/user';
+import { useCreatePermissionMutation } from '@/services/apis/permission';
+import { PatientsList } from '@/components/PatientsList';
 
-const { width, height } = Dimensions.get("window");
+const { width, height } = Dimensions.get('window');
 
 export default function DoctorHome() {
   const { address } = useAccount();
-  const router = useRouter();
-  if (!address) return null;
+  const [inputValue, setInputValue] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [createPermission] = useCreatePermissionMutation();
+  const { data: user } = useGetDoctorByAddressQuery(address!);
 
-  const { data: user } = useGetUserByAddressQuery(address);
-  
-  const radius = Math.min(width, height) * 0.3;
-  const angles = [30, 90, 150, 210, 270, 330];
-  const items = [
-    { label: "Pruebas Analíticas", href: "/analytic-reports" as const },
-    { label: "Pruebas de Imagen", href: "/image-reports" as const },
-    { label: "Vacunas", href: "/vaccines"  as const },
-    { label: "Incapacidad Temporal", href: "/temporary-incapacity" as const },
-    { label: "Medicación", href: "/medication" as const },
-    { label: "Informes Clínicos", href: "/clinic-reports" as const },
-  ];
+  const handleSubmit = async (patient: string) => {
+    if (!address) return;
 
-  const menuPositions = angles.map((angle) => {
-    const rad = (angle * Math.PI) / 180;
-    return {
-      x: useSharedValue(Math.cos(rad) * radius),
-      y: useSharedValue(Math.sin(rad) * radius),
-    };
-  });
+    await createPermission({address, permission: {patientId: patient, doctorId: address }});
+    setModalVisible(false);
+  };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <CommonHeader userName={user?.name} />
-      <View style={styles.menuContainer}>
-        {items.map((item, index) => {
-          const animatedStyle = useAnimatedStyle(() => ({
-            transform: [
-              { translateX: menuPositions[index].x.value },
-              { translateY: menuPositions[index].y.value },
-            ],
-          }));
+      <View style={styles.content}>
+        <Card style={styles.primaryCard}>
+          <Card.Content>
+            <Text style={styles.cardTitle}>Mis pacientes</Text>
+          </Card.Content>
+        </Card>
+        <Button
+          mode="contained"
+          onPress={() => setModalVisible(true)}
+          style={styles.centralButton}
+          labelStyle={styles.centralButtonText}
+        >
+          Añadir Pacientes
+        </Button>
 
-          return (
-            <Animated.View key={index} style={[styles.menuItem, animatedStyle]}>
-                <TouchableOpacity 
-                  style={[styles.itemButton]} 
-                  onPress={()=> router.push(item.href)}>
-                  <Text style={styles.itemText}>{item.label}</Text>
-                </TouchableOpacity>
-            </Animated.View>
-          );
-        })}
-        <TouchableOpacity 
-          style={styles.centerButton}
-          onPress={() => router.push("/basic-data")}>
-          <Text style={styles.centerText}>Menu doctor</Text>
-        </TouchableOpacity>
+        <PatientsList />
+        <Portal>
+          <Modal
+            visible={modalVisible}
+            onDismiss={() => setModalVisible(false)}
+            contentContainerStyle={styles.modalContent}
+          >
+            <Text style={styles.modalTitle}>Introduce un paciente</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Escribe algo..."
+              value={inputValue}
+              onChangeText={setInputValue}
+              placeholderTextColor="#aaa"
+            />
+            <Button
+              mode="contained"
+              onPress={() => handleSubmit(inputValue)}
+              style={styles.button}
+              labelStyle={{ color: '#fff', fontWeight: 'bold' }}
+            >
+              Enviar
+            </Button>
+            <Button
+              mode="text"
+              onPress={() => setModalVisible(false)}
+              style={styles.closeButton}
+            >
+              Cerrar
+            </Button>
+          </Modal>
+        </Portal>
       </View>
-    </View>
+    </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: '#F5F5F5',
   },
-  header: {
-    width: "100%",
-    height: height * 0.1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-  },
-  profileButton: {
-    backgroundColor: "#62CCC7",
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  profileText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-  greetingText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  notificationButton: {
-    padding: 8,
-  },
-  menuContainer: {
+  content: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    justifyContent: 'space-between',
+    paddingHorizontal: width * 0.05,
+    paddingVertical: height * 0.02,
   },
-  menuItem: {
-    position: "absolute",
+  primaryCard: {
+    borderRadius: 15,
+    backgroundColor: '#A5E3E0',
+    elevation: 2,
+    padding: 16,
+    width: '80%',
+    height: height * 0.15,
+    alignSelf: 'center',
+    marginTop: height * 0.1,
   },
-  itemButton: {
-    width: Math.min(width, height) * 0.25,
-    height: Math.min(width, height) * 0.25,
-    borderRadius: Math.min(width, height) * 0.25,
-    backgroundColor: "#62CCC782",
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
+  cardTitle: {
+    fontSize: height * 0.025,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#000',
   },
-  itemText: {
-    color: "#000",
-    textAlign: "center",
-    fontSize: Math.min(width, height) * 0.035,
+  centralButton: {
+    alignSelf: 'center',
+    backgroundColor: '#62CCC7',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    marginVertical: 20,
+    elevation: 3,
   },
-  centerButton: {
-    width: Math.min(width, height) * 0.25,
-    height: Math.min(width, height) * 0.25,
-    borderRadius: Math.min(width, height) * 0.25,
-    backgroundColor: "#62CCC7",
-    alignItems: "center",
-    justifyContent: "center",
+  centralButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    padding: 20,
+    marginHorizontal: 20,
+    borderRadius: 15,
     elevation: 5,
   },
-  centerText: {
-    color: "#000",
-    fontSize: Math.min(width, height) * 0.04,
-    fontWeight: "bold",
-    textAlign: "center",
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#333',
+  },
+  input: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+    marginBottom: 16,
+    fontSize: 16,
+    paddingVertical: 8,
+    color: '#333',
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    elevation: 2,
+  },
+  button: {
+    marginTop: 8,
+    backgroundColor: '#62CCC7',
+    borderRadius: 10,
+  },
+  closeButton: {
+    marginTop: 10,
   },
 });

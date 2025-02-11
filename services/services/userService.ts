@@ -1,4 +1,4 @@
-import { User } from "@/common/types";
+import { Doctor, User } from "@/common/types";
 import { encryptData, getAesKey } from "@/utils/crypto";
 import { getStoredKey, storeKey, storePassword } from "@/utils/secureStore";
 
@@ -31,6 +31,37 @@ export const registerUser = async (user: Partial<User>, address: string) => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(encryptedUserWithKey),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error en la solicitud: ${response.status}`);
+        }
+        return response.json();
+    } catch (error) {
+        console.error('Error al registrar el ususario', error);
+        throw error;
+    }
+};
+
+export const registerDoctor = async (doctor: Partial<Doctor>, address: string) => {
+    try {
+        const password = doctor.password;
+
+        if (password) {
+            await storePassword(password);
+        }
+
+        const doctorWithKey = {
+            ...doctor,
+            key: address,
+        };
+
+        const response = await fetch(`${URL}/register-doctor`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(doctorWithKey),
         });
 
         if (!response.ok) {

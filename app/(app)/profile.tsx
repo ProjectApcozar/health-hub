@@ -4,8 +4,7 @@ import { Button, Card, Portal, Text, Appbar, Avatar } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAccount, useDisconnect } from "wagmi";
 import { useRouter } from "expo-router";
-import { updateUser } from "@/services/services/userService";
-import { useGetIsPatientQuery, useGetUserByAddressQuery, useUpdateUserMutation } from "@/services/apis/user";
+import { useGetDoctorByAddressQuery, useGetIsDoctorQuery, useGetIsPatientQuery, useGetUserByAddressQuery, useUpdateUserMutation } from "@/services/apis/user";
 import { User } from "@/common/types";
 
 export default function Profile() {
@@ -13,6 +12,7 @@ export default function Profile() {
   const { address } = useAccount();
   const { disconnect } = useDisconnect();
   const { data: isPatient } = useGetIsPatientQuery(address!);
+  const { data: isDoctor } = useGetIsDoctorQuery(address!);
 
   const [fields, setFields] = useState({
     phone_number: "",
@@ -27,8 +27,10 @@ export default function Profile() {
   const [editingField, setEditingField] = useState<keyof typeof fields | null>(null);
   const [tempValue, setTempValue] = useState("");
 
-  const { data: user } = useGetUserByAddressQuery(address!);
+  const { data: patient } = useGetUserByAddressQuery(address!);
+  const { data: doctor } = useGetDoctorByAddressQuery(address!);
   const [ updateUser ] = useUpdateUserMutation();
+  const user = isDoctor ? doctor : patient;
 
   useEffect(() => {
     if (user) {
@@ -42,7 +44,7 @@ export default function Profile() {
       });
     }
     
-  }, [user]);
+  }, [doctor, patient, isDoctor]);
 
   const handleSave = async () => {
     if (editingField) {
@@ -82,7 +84,7 @@ export default function Profile() {
           <Card.Content style={styles.profileCardContent}>
             <Avatar.Icon size={64} icon="account" style={styles.avatar} />
             <Text style={styles.userName}>{user?.name || "Usuario Anónimo"}</Text>
-            <Text style={styles.userRole}>{isPatient ? "Paciente" : "Usuario"}</Text>
+            <Text style={styles.userRole}>{isPatient ? "Paciente" : "Doctor"}</Text>
             <Text style={styles.walletAddress}>{address}</Text>
           </Card.Content>
         </Card>

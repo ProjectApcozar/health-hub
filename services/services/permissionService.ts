@@ -31,3 +31,24 @@ export const createPermission = async (permission: Partial<Permission>) => {
         throw error;
     }
 };
+
+export const getDoctorPermissions = async (address: string) => {
+    try {
+        const password = await getPassword();
+        
+        const response = await fetch(`${URL}/doctor/${address}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ doctorPassword: password }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error en la solicitud: ${response.status}`);
+        }
+        return response.json();
+    } catch (error) {
+        throw error;
+    }
+}

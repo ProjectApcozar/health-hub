@@ -15,8 +15,8 @@ import {
 import { Button, Card } from 'react-native-paper';
 import { useAccount } from 'wagmi';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { useGetIsDoctorQuery, useRegisterUserMutation } from '@/services/apis/user';
-import { User } from '@/common/types';
+import { useRegisterDoctorMutation } from '@/services/apis/user';
+import { Doctor } from '@/common/types';
 
 const { width, height } = Dimensions.get('window');
 
@@ -26,17 +26,16 @@ export default function Register() {
     setValue,
     handleSubmit,
     formState: { errors },
-  } = useForm<User>();
+  } = useForm<Doctor>();
 
   const router = useRouter();
   const { address } = useAccount();
-  const [ registerUser ] = useRegisterUserMutation();
-  // const dispatch = useDispatch();
+  const [ registerDoctor ] = useRegisterDoctorMutation();
 
-  const onSubmit: SubmitHandler<User> = async (user: Partial<User>) => {
+  const onSubmit: SubmitHandler<Doctor> = async (doctor: Partial<Doctor>) => {
     if (!address) return;
 
-    await registerUser({address, user});
+    await registerDoctor({address, doctor});
     
     router.replace('/');
   };
@@ -49,7 +48,7 @@ export default function Register() {
       >
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <Card style={styles.card}>
-            <Card.Title title="Registro de Usuario" titleStyle={styles.cardTitle} />
+            <Card.Title title="Registro de Doctor" titleStyle={styles.cardTitle} />
             <Card.Content>
               <View>
                 <Text style={styles.label}>Nombre</Text>
@@ -61,15 +60,24 @@ export default function Register() {
                   placeholderTextColor="#777"
                 />
                 {errors.name && <Text style={styles.error}>{errors.name.message}</Text>}
-                <Text style={styles.label}>Edad</Text>
+                <Text style={styles.label}>Hospital</Text>
                 <TextInput
                   style={styles.input}
-                  {...register('dateOfBirth', { required: 'La edad es obligatoria' })}
-                  onChangeText={(text) => setValue('dateOfBirth', text)}
-                  placeholder="Introduce tu edad"
+                  {...register('hospital', { required: 'El hospital es obligatoria' })}
+                  onChangeText={(text) => setValue('hospital', text)}
+                  placeholder="Introduce el hospital donde trabajas"
                   placeholderTextColor="#777"
                 />
-                {errors.dateOfBirth && <Text style={styles.error}>{errors.dateOfBirth.message}</Text>}
+                {errors.hospital && <Text style={styles.error}>{errors.hospital.message}</Text>}
+                <Text style={styles.label}>Especialidad</Text>
+                <TextInput
+                  style={styles.input}
+                  {...register('type', { required: 'La especialidad es obligatoria' })}
+                  onChangeText={(text) => setValue('type', text)}
+                  placeholder="Introduce tu espcialidad"
+                  placeholderTextColor="#777"
+                />
+                {errors.hospital && <Text style={styles.error}>{errors.hospital.message}</Text>}
                 <Text style={styles.label}>Teléfono</Text>
                 <TextInput
                   style={styles.input}
@@ -90,8 +98,8 @@ export default function Register() {
                 <TextInput
                   style={styles.input}
                   secureTextEntry
-                  {...register('encryptedUserPassword', { required: 'La contraseña es obligatoria' })}
-                  onChangeText={(text) => setValue('encryptedUserPassword', text)}
+                  {...register('password', { required: 'La contraseña es obligatoria' })}
+                  onChangeText={(text) => setValue('password', text)}
                   placeholder="Introduce tu contraseña"
                   passwordRules="minlength: 8; required: lower; required: upper; required: digit; required: special;"
                   placeholderTextColor="#777"
