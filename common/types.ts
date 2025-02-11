@@ -10,6 +10,15 @@ export type User = {
     email: string;
 };
 
+export type Doctor = {
+    address: string;
+    name: string;
+    phoneNumber: string;
+    hospital: string;
+    type: string;
+    password: string;
+};
+
 export type Permission = {
     patientId: string;
     doctorId: string;

@@ -1,8 +1,14 @@
 import { Permission } from "@/common/types";
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { createPermission } from "../services/permissionService";
+import { createPermission, getDoctorPermissions } from "../services/permissionService";
+import { getPassword } from "@/utils/secureStore";
 
 const baseUrl = process.env.EXPO_PUBLIC_API_URL as string;
+
+interface PermissionRequest {
+    address: string;
+    password: string;
+};
 
 export const permissionsApi = createApi({
     reducerPath: "permissionsApi",
@@ -22,8 +28,11 @@ export const permissionsApi = createApi({
             query: (address) => `permissions/patient/${address}`,
             providesTags: (address) => [{ type: "Permission", address }],
         }),
-        getDoctorPermissions: builder.query<Permission[], string>({
-            query: (address) => `permissions/doctor/${address}`,
+        getDoctorPermissions: builder.query({
+            async queryFn({ address }) {
+                const data = await getDoctorPermissions(address);
+                return data;
+            },
             providesTags: (address) => [{ type: "Permission", address }],
         }),
         // DELETE

@@ -23,8 +23,15 @@ export const encryptData = async (data: any, aesKey: string): Promise<any> => {
     return encryptedData;
 }; 
 
-export const decryptData = async (encryptedData: any): Promise<any> => {
-    const aesKey = await getStoredKey();
+export const decryptData = async (encryptedData: any, key?: string): Promise<any> => {
+    let aesKey;
+
+    if (key) {
+        aesKey = key;
+    } else {
+        aesKey = await getStoredKey();
+    }
+
     if (!aesKey) return encryptedData;
     const decryptedData: Partial<any> = {};
     for (const [key, value] of Object.entries(encryptedData)) {

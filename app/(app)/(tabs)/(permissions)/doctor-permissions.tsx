@@ -1,74 +1,28 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Dimensions, Pressable, Animated, Modal, TextInput, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Dimensions, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Card, Text, Avatar, Button } from 'react-native-paper';
+import { Card, Text, Button, Portal, Modal } from 'react-native-paper';
 import { CommonHeader } from '@/components/CommonHeader';
-import { useAccount, useWriteContract } from 'wagmi';
-import { dataintegrityABI } from '@/abis/DataIntergrityABI';
-import { contractAddress } from '@/constants/ContractAddress';
-import { useGetUserByAddressQuery } from '@/services/apis/user';
+import { useAccount } from 'wagmi';
+import { useGetDoctorByAddressQuery } from '@/services/apis/user';
+import { useCreatePermissionMutation } from '@/services/apis/permission';
+import { PermissionsList } from '@/components/PermissionsList';
 
 const { width, height } = Dimensions.get('window');
-
-const dataList = [
-  {
-    id: '1',
-    title: 'Angel Paderne',
-    date: '15/03/2020',
-    category: 'Hospital Universitario de Caracas',
-    icon: 'patient',
-  },
-  {
-    id: '2',
-    title: 'Paula Orozco',
-    date: '10/07/2018',
-    category: 'Hospital de Clínicas Caracas',
-    icon: 'patient',
-  },
-  {
-    id: '3',
-    title: 'Manuel Parra',
-    date: '20/01/2023',
-    category: 'Hospital de Niños JM de los Ríos',
-    icon: 'patient',
-  },
-];
 
 export default function DoctorPermissions() {
   const { address } = useAccount();
   const [inputValue, setInputValue] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
-  const { writeContract } = useWriteContract();
+  const [createPermission] = useCreatePermissionMutation();
+  const { data: user } = useGetDoctorByAddressQuery(address!);
 
-  if (!address) return null;
+  const handleSubmit = async (patient: string) => {
+    if (!address) return;
 
-  const { data: user } = useGetUserByAddressQuery(address);
-  /* const { doctors } = useGetAuthorizedDoctors(address); */
-  const animations = dataList.map(() => new Animated.Value(1));
-
-  const handlePressIn = (index: number) => {
-    Animated.spring(animations[index], {
-      toValue: 0.95,
-      useNativeDriver: true,
-    }).start();
+    await createPermission({address, permission: {patientId: patient, doctorId: address }});
+    setModalVisible(false);
   };
-
-  const handlePressOut = (index: number) => {
-    Animated.spring(animations[index], {
-      toValue: 1,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const handleSumbit = async (comment: string) => {
-    await writeContract({
-        abi: dataintegrityABI,
-        address: contractAddress,
-        functionName: 'requestAccess',
-        account: address,
-        args: [comment],
-    });
-  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -76,90 +30,50 @@ export default function DoctorPermissions() {
       <View style={styles.content}>
         <Card style={styles.primaryCard}>
           <Card.Content>
-            <Text style={styles.cardTitle}>Datos Básicos de Salud</Text>
+            <Text style={styles.cardTitle}>Gestión de permisos</Text>
           </Card.Content>
         </Card>
-
-        <TouchableOpacity
-          style={styles.centralButton}
+        <Button
+          mode="contained"
           onPress={() => setModalVisible(true)}
+          style={styles.centralButton}
+          labelStyle={styles.centralButtonText}
         >
-          <Text style={styles.centralButtonText}>Añadir Pacientes</Text>
-        </TouchableOpacity>
+          Añadir Doctores
+        </Button>
 
-        <Card style={styles.groupedCard}>
-          <Card.Content>
-            {dataList.map((item, index) => (
-              <View key={index}>
-                <Pressable
-                  onPress={() => console.log(`Clicked on ${item}`)}
-                  onPressIn={() => handlePressIn(index)}
-                  onPressOut={() => handlePressOut(index)}
-                  style={({ pressed }) => [
-                    { opacity: pressed ? 0.8 : 1 },
-                  ]}
-                >
-                  <Animated.View
-                    style={[
-                      styles.listItem,
-                      { transform: [{ scale: animations[index] }] },
-                    ]}
-                  >
-                    <Avatar.Icon
-                      size={40}
-                      icon="doctor"
-                      style={styles.icon}
-                      color="#fff"
-                    />
-                    <View style={styles.itemDetails}>
-                      <Text style={styles.itemTitle}>{item.title}</Text>
-                      <Text style={styles.itemSubtitle}>{item.category}</Text>
-                    </View>
-                    <Text style={styles.itemDate}>{item.date}</Text>
-                  </Animated.View>
-                </Pressable>
-              </View>
-            ))}
-          </Card.Content>
-        </Card>
-
-        <Modal
-          visible={modalVisible}
-          animationType="slide"
-          transparent={true}
-          onRequestClose={() => setModalVisible(false)}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Introduce un comentario</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Escribe algo..."
-                value={inputValue}
-                onChangeText={setInputValue}
-                placeholderTextColor="#aaa"
-              />
-              <Button
-                mode="contained"
-                onPress={() => {
-                    handleSumbit(inputValue);
-                    setModalVisible(false);
-                }}
-                style={styles.button}
-                labelStyle={{ color: '#fff', fontWeight: 'bold' }}
-              >
-                Enviar
-              </Button>
-              <Button
-                mode="text"
-                onPress={() => setModalVisible(false)}
-                style={styles.closeButton}
-              >
-                Cerrar
-              </Button>
-            </View>
-          </View>
-        </Modal>
+        <PermissionsList />
+        <Portal>
+          <Modal
+            visible={modalVisible}
+            onDismiss={() => setModalVisible(false)}
+            contentContainerStyle={styles.modalContent}
+          >
+            <Text style={styles.modalTitle}>Introduce un comentario</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Escribe algo..."
+              value={inputValue}
+              onChangeText={setInputValue}
+              placeholderTextColor="#aaa"
+            />
+            <Button
+              mode="contained"
+              onPress={() => handleSubmit(inputValue)}
+              style={styles.button}
+              labelStyle={{ color: '#fff', fontWeight: 'bold' }}
+            >
+              Enviar
+            </Button>
+            <Button
+              mode="text"
+              onPress={() => setModalVisible(false)}
+              style={styles.closeButton}
+            >
+              Cerrar
+            </Button>
+          </Modal>
+        </Portal>
       </View>
     </SafeAreaView>
   );
@@ -186,47 +100,39 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: height * 0.1,
   },
-  groupedCard: {
-    borderRadius: 15,
-    backgroundColor: '#fff',
-    elevation: 2,
-    width: '100%',
-    marginBottom: height * 0.02,
-  },
   cardTitle: {
     fontSize: height * 0.025,
     fontWeight: 'bold',
     textAlign: 'center',
     color: '#000',
   },
-  listItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 10,
-    borderRadius: 10,
-    backgroundColor: '#fff',
-  },
-  icon: {
+  centralButton: {
+    alignSelf: 'center',
     backgroundColor: '#62CCC7',
-    marginRight: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    marginVertical: 20,
+    elevation: 3,
   },
-  itemDetails: {
-    flex: 1,
+  centralButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
-  itemTitle: {
-    fontSize: height * 0.02,
-    fontWeight: '600',
+  modalContent: {
+    backgroundColor: '#fff',
+    padding: 20,
+    marginHorizontal: 20,
+    borderRadius: 15,
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
     color: '#333',
-  },
-  itemSubtitle: {
-    fontSize: height * 0.018,
-    color: '#777',
-    marginTop: 4,
-  },
-  itemDate: {
-    fontSize: height * 0.018,
-    color: '#333',
-    fontWeight: '600',
   },
   input: {
     borderBottomWidth: 1,
@@ -244,39 +150,6 @@ const styles = StyleSheet.create({
     marginTop: 8,
     backgroundColor: '#62CCC7',
     borderRadius: 10,
-  },
-  centralButton: {
-    alignSelf: 'center',
-    backgroundColor: '#62CCC7',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-    marginVertical: 20,
-    elevation: 3,
-  },
-  centralButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: '#fff',
-    padding: 20,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
-    elevation: 5,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#333',
   },
   closeButton: {
     marginTop: 10,

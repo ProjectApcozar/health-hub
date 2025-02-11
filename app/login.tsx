@@ -4,7 +4,7 @@ import { useRouter } from "expo-router";
 import { useAccount } from "wagmi";
 import { useEffect } from "react";
 import { Button, Text } from "react-native-paper";
-import { useGetIsDoctorQuery, useGetIsPatientQuery } from "@/services/apis/user";
+import { useGetIsDoctorEnabledQuery, useGetIsDoctorQuery, useGetIsPatientQuery } from "@/services/apis/user";
 
 export default function Login() {
   const { open } = useAppKit()
@@ -12,11 +12,17 @@ export default function Login() {
   const { isConnected, address, isConnecting } = useAccount();
   const { data: isPatient, isLoading: isLoadingPatient } = useGetIsPatientQuery(address!);
   const { data: isDoctor, isLoading: isLoadingDoctor } = useGetIsDoctorQuery(address!);
+  const { data: isDoctorEnabled, isLoading: isLoadingDoctorEnabled } = useGetIsDoctorEnabledQuery(address!);
+
   const router = useRouter();
 
   useEffect(() => {
-    if (!isConnected || isLoadingPatient || isLoadingDoctor) return;
+    if (!isConnected || isLoadingPatient || isLoadingDoctor || isLoadingDoctorEnabled) return;
 
+    if (isDoctorEnabled) {
+      router.replace("/doctor-register");
+      return;
+    }
     if (!isPatient && !isDoctor){
       router.replace("/register");
       return;
@@ -32,7 +38,7 @@ export default function Login() {
       return;
     }
 
-  }, [ isConnected, isDoctor, isPatient, isLoadingPatient, isLoadingDoctor ]);
+  }, [ isConnected, isDoctor, isPatient, isLoadingPatient, isLoadingDoctor, isLoadingDoctorEnabled ]);
 
   return (
     <View style={styles.container}>
