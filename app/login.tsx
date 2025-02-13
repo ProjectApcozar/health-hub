@@ -19,8 +19,8 @@ export default function Login() {
   useEffect(() => {
     if (!isConnected || isLoadingPatient || isLoadingDoctor || isLoadingDoctorEnabled) return;
 
-    if (isDoctorEnabled) {
-      router.replace("/doctor-register");
+    if (isDoctorEnabled && !isDoctor) {
+      router.replace("/register-doctor");
       return;
     }
     if (!isPatient && !isDoctor){
