@@ -1,20 +1,22 @@
 import React, { useState } from "react";
 import { Animated, StyleSheet, Dimensions, View } from "react-native";
 import { Avatar, Card, Text, TouchableRipple } from "react-native-paper";
-import { MedicationFloatingModal } from "./MedicationFloatingModal";
+import { VaccineFloatingModal } from "./VaccineFloatingModal"; // Importar el modal
 import { useAccount } from "wagmi";
-import { useGetMedicationsByAddressQuery } from "@/services/apis/medication";
+import { useGetVaccinesByAddressQuery } from "@/services/apis/vaccine";
 
 const { height } = Dimensions.get("window");
 
-export const MedicationList = () => {
+export const VaccinesList = () => {
   const { address } = useAccount();
   const [isModalVisible, setModalVisible] = useState(false);
-  const { data: medications } = useGetMedicationsByAddressQuery(address!);
-  if (!address || !Array.isArray(medications) || medications.length === 0) return null;
+  const { data: vaccines } = useGetVaccinesByAddressQuery(address!);
 
-  const animations = medications.map(() => new Animated.Value(1));
-  const displayedMedications = medications.length < 4 ? medications : medications.slice(0, 3);
+  if (!address || !Array.isArray(vaccines) || vaccines.length === 0) return null;
+  const animations = vaccines.map(() => new Animated.Value(1));
+  const showSeeAll = vaccines.length > 3;
+
+  const displayedVaccines = showSeeAll ? vaccines.slice(0, 3) : vaccines;
 
   const handlePressIn = (index: number) => {
     Animated.spring(animations[index], {
@@ -36,7 +38,7 @@ export const MedicationList = () => {
     <View>
       <Card style={styles.groupedCard}>
         <Card.Content style={styles.cardContent}>
-          {displayedMedications.map((item, index) => (
+          {displayedVaccines.map((item, index) => (
             <View key={index}>
               <TouchableRipple
                 onPress={() => console.log(`Clicked on ${item.name}`)}
@@ -54,29 +56,31 @@ export const MedicationList = () => {
                 >
                   <Avatar.Icon
                     size={40}
-                    icon="pill"
+                    icon="needle"
                     style={styles.icon}
                     color="#fff"
                   />
                   <View style={styles.itemDetails}>
                     <Text style={styles.itemTitle}>{item.name}</Text>
-                    <Text style={styles.itemSubtitle}>{`${item.startDate} - ${item.duration} days`}</Text>
+                    <Text style={styles.itemSubtitle}>{item.healthCenter}</Text>
                   </View>
-                  <Text style={styles.itemAmount}>{item.createdAt}</Text>
+                  <Text style={styles.itemAmount}>{item.applicationDate}</Text>
                 </Animated.View>
               </TouchableRipple>
             </View>
           ))}
-          <TouchableRipple
+          {showSeeAll &&
+            <TouchableRipple
             onPress={toggleModal}
             rippleColor="rgba(0, 0, 0, 0.1)"
             borderless
-          >
-            <Text style={styles.seeAll}>Ver todo</Text>
-          </TouchableRipple>
+            >
+              <Text style={styles.seeAll}>Ver todo</Text>
+            </TouchableRipple>
+          }
         </Card.Content>
       </Card>
-      <MedicationFloatingModal visible={isModalVisible} onClose={toggleModal} data={medications} />
+      <VaccineFloatingModal visible={isModalVisible} onClose={toggleModal} data={vaccines} />
     </View>
   );
 };

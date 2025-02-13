@@ -8,9 +8,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Card, Text, Button } from "react-native-paper";
 import { CommonHeader } from "@/components/CommonHeader";
 import { useAccount } from "wagmi";
-import { MedicationForm } from "@/components/MedicationForm";
+import { MedicationForm } from "@/components/Medication/MedicationForm";
 import { useGetUserByAddressQuery } from "@/services/apis/user";
-import { MedicationList } from "@/components/MedicationList";
+import { MedicationList } from "@/components/Medication/MedicationList";
 
 const { width, height } = Dimensions.get("window");
 

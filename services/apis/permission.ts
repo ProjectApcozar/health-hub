@@ -31,7 +31,12 @@ export const permissionsApi = createApi({
         getDoctorPermissions: builder.query({
             async queryFn({ address }) {
                 const data = await getDoctorPermissions(address);
-                return data;
+
+                if (Array.isArray(data) && data.length === 0) {
+                    return { data: [] }
+                }
+
+                return { data };
             },
             providesTags: (address) => [{ type: "Permission", address }],
         }),
