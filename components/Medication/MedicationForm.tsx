@@ -34,7 +34,7 @@ export const MedicationForm = ({
       address,
       medication
     });
-    onClose(); // Cierra el modal al guardar
+    onClose();
   };
 
   return (

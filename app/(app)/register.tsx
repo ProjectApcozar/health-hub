@@ -15,7 +15,7 @@ import {
 import { Button, Card } from 'react-native-paper';
 import { useAccount } from 'wagmi';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { useGetIsDoctorQuery, useRegisterUserMutation } from '@/services/apis/user';
+import { useRegisterUserMutation } from '@/services/apis/user';
 import { User } from '@/common/types';
 
 const { width, height } = Dimensions.get('window');
@@ -31,7 +31,6 @@ export default function Register() {
   const router = useRouter();
   const { address } = useAccount();
   const [ registerUser ] = useRegisterUserMutation();
-  // const dispatch = useDispatch();
 
   const onSubmit: SubmitHandler<User> = async (user: Partial<User>) => {
     if (!address) return;
@@ -61,12 +60,12 @@ export default function Register() {
                   placeholderTextColor="#777"
                 />
                 {errors.name && <Text style={styles.error}>{errors.name.message}</Text>}
-                <Text style={styles.label}>Edad</Text>
+                <Text style={styles.label}>Fecha de nacimiento</Text>
                 <TextInput
                   style={styles.input}
-                  {...register('dateOfBirth', { required: 'La edad es obligatoria' })}
+                  {...register('dateOfBirth', { required: 'La fecha de nacimiento es obligatoria' })}
                   onChangeText={(text) => setValue('dateOfBirth', text)}
-                  placeholder="Introduce tu edad"
+                  placeholder="Introduce tu fecha de nacimiento"
                   placeholderTextColor="#777"
                 />
                 {errors.dateOfBirth && <Text style={styles.error}>{errors.dateOfBirth.message}</Text>}

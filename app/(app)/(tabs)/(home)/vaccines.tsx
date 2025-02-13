@@ -1,21 +1,25 @@
-import { useState } from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, Card, Text } from 'react-native-paper';
-import { CommonHeader } from '@/components/CommonHeader';
-import { useAccount } from 'wagmi';
-import { useGetUserByAddressQuery } from '@/services/apis/user';
-import { VaccinesList } from '@/components/VaccinesList';
-import { VaccinesForm } from '@/components/VaccinesForm';
+import React, { useState } from "react";
+import {
+  View,
+  StyleSheet,
+  Dimensions
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Card, Text, Button } from "react-native-paper";
+import { CommonHeader } from "@/components/CommonHeader";
+import { useAccount } from "wagmi";
+import { useGetUserByAddressQuery } from "@/services/apis/user";
+import { VaccinesForm } from "@/components/Vaccines/VaccinesForm";
+import { VaccinesList } from "@/components/Vaccines/VaccinesList";
 
-const { width, height } = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 
-export default function Vaccines() {
+export default function Medication() {
   const { address } = useAccount();
-  
   if (!address) return null;
-  const [modalVisible, setModalVisible] = useState(false);
+
   const { data: user } = useGetUserByAddressQuery(address);
+  const [modalVisible, setModalVisible] = useState(false);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -31,8 +35,8 @@ export default function Vaccines() {
           onPress={() => setModalVisible(true)}
           style={styles.centralButton}
           labelStyle={styles.centralButtonText}
-          >
-            Añadir Vacunas
+        >
+          Añadir vacunas
         </Button>
         <VaccinesForm visible={modalVisible} onClose={() => setModalVisible(false)} />
         <VaccinesList />
@@ -42,6 +46,31 @@ export default function Vaccines() {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F5F5F5",
+  },
+  content: {
+    flex: 1,
+    justifyContent: "space-between",
+    paddingHorizontal: width * 0.05,
+    paddingVertical: height * 0.02,
+  },
+  primaryCard: {
+    borderRadius: 50,
+    backgroundColor: "#A5E3E0",
+    width: "80%",
+    height: height * 0.15,
+    alignSelf: "center",
+    marginTop: height * 0.1,
+    justifyContent: "center",
+  },
+  cardTitle: {
+    fontSize: height * 0.025,
+    fontWeight: "bold",
+    textAlign: "center",
+    color: "#000",
+  },
   centralButton: {
     alignSelf: "center",
     backgroundColor: "#62CCC7",
@@ -56,31 +85,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     textAlign: "center",
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-  },
-  content: {
-    flex: 1,
-    justifyContent: 'space-between',
-    paddingHorizontal: width * 0.05,
-    paddingVertical: height * 0.02,
-  },
-  primaryCard: {
-    borderRadius: 15,
-    backgroundColor: '#A5E3E0',
-    elevation: 2,
-    padding: 16,
-    width: '80%',
-    height: height * 0.15,
-    alignSelf: 'center',
-    marginTop: height * 0.1,
-  },
-  cardTitle: {
-    fontSize: height * 0.025,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#000',
-  },
+  }
 });

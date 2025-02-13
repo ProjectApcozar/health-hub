@@ -42,14 +42,13 @@ export default function PatientPermissions() {
           Añadir Doctores
         </Button>
         <PermissionsList />
-
         <Portal>
           <Modal
             visible={modalVisible}
             onDismiss={() => setModalVisible(false)}
             contentContainerStyle={styles.modalContent}
           >
-            <Text style={styles.modalTitle}>Introduce un comentario</Text>
+            <Text style={styles.modalTitle}>Introduce un doctor</Text>
             <TextInput
               style={styles.input}
               placeholder="Escribe algo..."
@@ -86,29 +85,28 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
     paddingHorizontal: width * 0.05,
     paddingVertical: height * 0.02,
   },
   primaryCard: {
-    borderRadius: 15,
-    backgroundColor: '#A5E3E0',
-    elevation: 2,
-    padding: 16,
-    width: '80%',
+    borderRadius: 50,
+    backgroundColor: "#A5E3E0",
+    width: "80%",
     height: height * 0.15,
-    alignSelf: 'center',
+    alignSelf: "center",
     marginTop: height * 0.1,
+    justifyContent: "center",
   },
   cardTitle: {
     fontSize: height * 0.025,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#000',
+    fontWeight: "bold",
+    textAlign: "center",
+    color: "#000",
   },
   centralButton: {
-    alignSelf: 'center',
-    backgroundColor: '#62CCC7',
+    alignSelf: "center",
+    backgroundColor: "#62CCC7",
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 20,
@@ -116,10 +114,10 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   centralButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
   },
   modalContent: {
     backgroundColor: '#fff',

@@ -11,7 +11,6 @@ import {
 import { Avatar, Card, Dialog, Portal } from "react-native-paper";
 import { useAccount } from "wagmi";
 import { useDeletePermissionMutation, useGetDoctorPermissionsQuery } from "@/services/apis/permission";
-import { getPassword } from "@/utils/secureStore";
 
 export const PatientsList = () => {
   const { address } = useAccount();
