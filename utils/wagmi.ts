@@ -1,8 +1,6 @@
-import { createConfig, type CreateConnectorFn, createStorage, http, webSocket } from "wagmi";
 import { sepolia } from '@wagmi/core/chains';
-import { walletConnect } from '@reown/appkit-wagmi-react-native/src/connectors/WalletConnectConnector';
-import { StorageUtil } from '@reown/appkit-scaffold-utils-react-native';
 import { defaultWagmiConfig } from "@reown/appkit-wagmi-react-native";
+import { createPublicClient, webSocket } from 'viem';
 
 const chains = [sepolia] as const;
 const projectId = process.env.EXPO_PUBLIC_PROJECT_ID as string;
@@ -14,3 +12,8 @@ const metadata = {
 };
 
 export const wagmiConfig = defaultWagmiConfig({chains, metadata, projectId});
+
+export const publicClient = createPublicClient({
+    chain: sepolia,
+    transport: webSocket('wss://sepolia.infura.io/ws/v3/82f0375fcd6844948892bf0305a6ba2a'),
+});

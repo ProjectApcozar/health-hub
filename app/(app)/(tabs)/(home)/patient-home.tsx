@@ -15,6 +15,9 @@ import { useRouter } from "expo-router";
 import { useAccount } from "wagmi";
 import { CommonHeader } from "@/components/CommonHeader";
 import { useGetUserByAddressQuery } from "@/services/apis/user";
+import { contractAddress } from "@/constants/ContractAddress";
+import { dataintegrityABI } from "@/abis/DataIntergrityABI";
+import { publicClient } from "@/utils/wagmi";
 
 const { width, height } = Dimensions.get("window");
 
@@ -25,7 +28,15 @@ export default function PatientHome() {
   const {
     data: user
   } = useGetUserByAddressQuery(address);
-  
+
+  publicClient.watchContractEvent({
+    address: contractAddress,
+    abi: dataintegrityABI,
+    eventName: 'AccessRequested',
+    onLogs: logs => console.log(logs),
+    onError: errors => console.log(errors),
+  });
+
   const radius = Math.min(width, height) * 0.3;
   const angles = [30, 90, 150, 210, 270, 330];
   const items = [
