@@ -10,48 +10,50 @@ import {
 } from "react-native";
 import { Avatar, Card, Dialog, Portal } from "react-native-paper";
 import { useAccount } from "wagmi";
-import { useDeletePermissionMutation } from "@/services/apis/permission";
-import { router } from "expo-router";
+import { useCreatePermissionMutation, useDeletePermissionMutation } from "@/services/apis/permission";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
-interface PatientsListProps {
-  patients: [];
-  shouldRedirect?: boolean;
-}
-
-export const PatientsList = ({ patients, shouldRedirect }: PatientsListProps) => {
+export const PermissionRequestList = () => {
   const { address } = useAccount();
   const [isDialogVisible, setIsDialogVisible] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState<any>(null); // Para almacenar el doctor seleccionado
   const [ deletePermission ] = useDeletePermissionMutation();
+  const [createPermission] = useCreatePermissionMutation();
 
   if (!address) return null;
+  const doctors = useSelector((state: RootState) => state.notifications.logs);
+  if (!doctors || doctors.length === 0) return null;
 
-  if (!patients || patients.length === 0) return null;
-  const dataList: any[] = patients;
-  const displayedPatients = dataList.length < 4 ? dataList : dataList.slice(0, 3);
+  const dataList: any[] = doctors;
+  const displayedDoctors = dataList.length < 4 ? dataList : dataList.slice(0, 3);
 
-  const animations = patients.map(() => new Animated.Value(1));
+  const animations = doctors.map(() => new Animated.Value(1));
 
   const handleDelete = () => {
-    deletePermission({address, permission: {patientId: selectedDoctor.patientId, doctorId: address }})
+    deletePermission({address, permission: {patientId: address, doctorId: selectedDoctor.id }})
     setIsDialogVisible(false);
+  };
+
+  const handleSubmit = async (item: string) => {
+    if (!address) return;
+
+    await createPermission({address, permission: {patientId: address, doctorId: item }});
+    setModalVisible(false);
   };
 
   return (
     <Card style={styles.groupedCard}>
       <Card.Content>
-        {displayedPatients.map((item, index) => (
+        {displayedDoctors.map((item, index) => (
           <View key={index}>
             <Pressable
               onPress={() => {
-                shouldRedirect 
-                ?
-                  router.push(`/(app)/(tabs)/(home)/patient-home?patientId=${item.patientId}`)
-                : (() => {
-                  setSelectedDoctor(item);
-                  setIsDialogVisible(true);
-                })
+                setSelectedDoctor(item); // Almacena el doctor seleccionado
+                setIsDialogVisible(true); // Muestra el diálogo
+                handleSubmit(item)
               }}
+
               style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
             >
               <Animated.View
@@ -68,13 +70,9 @@ export const PatientsList = ({ patients, shouldRedirect }: PatientsListProps) =>
                 />
                 <View style={styles.itemDetails}>
                   <Text style={styles.itemTitle}>
-                    {item.name || `Doctor ${index}`}
-                  </Text>
-                  <Text style={styles.itemSubtitle}>
-                    {item.type || `Category ${index}`}
+                    {`Doctor: ${item}` || `Doctor ${index}`}
                   </Text>
                 </View>
-                <Text style={styles.itemDate}>{item.permissionDate || "11/01/2025"}</Text>
               </Animated.View>
             </Pressable>
           </View>
@@ -193,3 +191,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
+function setModalVisible(arg0: boolean) {
+    throw new Error("Function not implemented.");
+}
+

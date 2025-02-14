@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -11,31 +11,46 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
 } from "react-native-reanimated";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useAccount } from "wagmi";
 import { CommonHeader } from "@/components/CommonHeader";
 import { useGetUserByAddressQuery } from "@/services/apis/user";
 import { contractAddress } from "@/constants/ContractAddress";
 import { dataintegrityABI } from "@/abis/DataIntergrityABI";
 import { publicClient } from "@/utils/wagmi";
+import { useDispatch } from "react-redux";
+import { addLog } from "@/store/notificationsSlice";
 
 const { width, height } = Dimensions.get("window");
 
 export default function PatientHome() {
   const { address } = useAccount();
+  const { patientId } = useLocalSearchParams();
   const router = useRouter();
-  if (!address) return null;
+  const workingAddress = Array.isArray(patientId) ? patientId[0] : patientId || address;
+  if (!workingAddress) return null;
+
   const {
     data: user
-  } = useGetUserByAddressQuery(address);
+  } = useGetUserByAddressQuery(workingAddress);
+  console.log(user);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const unwatch = publicClient.watchContractEvent({
+      address: contractAddress,
+      abi: dataintegrityABI,
+      eventName: "AccessRequested",
+      onLogs: (logs) => {
+        let nicelog: any = logs[0];
+        console.log("Nuevo log recibido:", nicelog.args.doctor);
+        let doctor = nicelog.args.doctor;
+        dispatch(addLog(doctor)); // Guarda los logs en Redux
+      },
+      onError: (errors) => console.error("Error al recibir logs:", errors),
+    });
 
-  publicClient.watchContractEvent({
-    address: contractAddress,
-    abi: dataintegrityABI,
-    eventName: 'AccessRequested',
-    onLogs: logs => console.log(logs),
-    onError: errors => console.log(errors),
-  });
+    return () => unwatch(); // Detener la suscripción cuando se desmonte el componente
+  }, [dispatch]);
 
   const radius = Math.min(width, height) * 0.3;
   const angles = [30, 90, 150, 210, 270, 330];

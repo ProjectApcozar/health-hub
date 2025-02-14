@@ -10,16 +10,20 @@ import {
 } from "react-native";
 import { Avatar, Card, Dialog, Portal } from "react-native-paper";
 import { useAccount } from "wagmi";
-import { useDeletePermissionMutation, useGetPatientPermissionsQuery } from "@/services/apis/permission";
+import { useDeletePermissionMutation } from "@/services/apis/permission";
+import { Permission } from "@/common/types";
 
-export const PermissionsList = () => {
+interface PatientsListProps {
+  doctors?: Permission[];
+}
+
+export const PermissionsList = ({ doctors }: PatientsListProps) => {
   const { address } = useAccount();
   const [isDialogVisible, setIsDialogVisible] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState<any>(null); // Para almacenar el doctor seleccionado
   const [ deletePermission ] = useDeletePermissionMutation();
 
   if (!address) return null;
-  const { data: doctors } = useGetPatientPermissionsQuery(address);
   if (!doctors || doctors.length === 0) return null;
 
   const dataList: any[] = doctors;

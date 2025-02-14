@@ -1,4 +1,4 @@
-import { Medication, Vaccine } from "@/common/types";
+import { Medication } from "@/common/types";
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { decryptData } from "@/utils/crypto";
 import { createMedication } from "../services/medicationService";
