@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Dimensions, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card, Text, Button, Portal, Modal } from 'react-native-paper';
 import { CommonHeader } from '@/components/CommonHeader';
 import { useAccount } from 'wagmi';
 import { useGetDoctorByAddressQuery } from '@/services/apis/user';
-import { useCreatePermissionMutation } from '@/services/apis/permission';
-import { PermissionsList } from '@/components/PermissionsList';
+import { useCreatePermissionMutation, useGetDoctorPermissionsQuery } from '@/services/apis/permission';
+import { publicClient } from '@/utils/wagmi';
+import { contractAddress } from '@/constants/ContractAddress';
+import { dataintegrityABI } from '@/abis/DataIntergrityABI';
+import { PatientsList } from '@/components/PatientsList';
 
 const { width, height } = Dimensions.get('window');
 
@@ -16,6 +19,7 @@ export default function DoctorPermissions() {
   const [modalVisible, setModalVisible] = useState(false);
   const [createPermission] = useCreatePermissionMutation();
   const { data: user } = useGetDoctorByAddressQuery(address!);
+  const { data: patients, refetch } = useGetDoctorPermissionsQuery(address);
 
   const handleSubmit = async (patient: string) => {
     if (!address) return;
@@ -23,6 +27,36 @@ export default function DoctorPermissions() {
     await createPermission({address, permission: {patientId: patient, doctorId: address }});
     setModalVisible(false);
   };
+      useEffect(() => {
+        const unwatch1 = publicClient.watchContractEvent({
+          address: contractAddress,
+          abi: dataintegrityABI,
+          eventName: "AccessGranted",
+          onLogs: (logs) => {
+            let nicelog: any = logs[0];
+            console.log("Nuevo log recibido:", nicelog.args.doctor);
+            refetch();
+          },
+          onError: (errors) => console.error("Error al recibir logs:", errors),
+        });
+  
+        const unwatch2 = publicClient.watchContractEvent({
+          address: contractAddress,
+          abi: dataintegrityABI,
+          eventName: "AccessRevoked",
+          onLogs: (logs) => {
+            let nicelog: any = logs[0];
+            console.log("Nuevo log recibido:", nicelog.args.doctor);
+            refetch();
+          },
+          onError: (errors) => console.error("Error al recibir logs:", errors),
+        });
+    
+        return () => {
+          unwatch1();
+          unwatch2();
+        }
+      }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -42,7 +76,7 @@ export default function DoctorPermissions() {
           Añadir Pacientes
         </Button>
 
-        <PermissionsList />
+        <PatientsList patients={patients}/>
         <Portal>
           <Modal
             visible={modalVisible}

@@ -1,7 +1,6 @@
 import { Permission } from "@/common/types";
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { createPermission, getDoctorPermissions } from "../services/permissionService";
-import { getPassword } from "@/utils/secureStore";
 
 const baseUrl = process.env.EXPO_PUBLIC_API_URL as string;
 
@@ -23,15 +22,22 @@ export const permissionsApi = createApi({
             },
             invalidatesTags: (_result, _error, { address }) => [{ type: "Permission", address }],
         }),
+        requestPermission: builder.mutation<Permission, { address: string; doctorId: string; patientId: string }>({
+            query: ({ doctorId, patientId}) => ({
+                url: '/permissions/request-access',
+                method: 'POST',
+                body: { doctorId, patientId}
+            }),
+            invalidatesTags: (_result, _error, { address }) => [{ type: "Permission", address }],
+        }),
         // READ
         getPatientPermissions: builder.query<Permission[], string>({
             query: (address) => `permissions/patient/${address}`,
             providesTags: (address) => [{ type: "Permission", address }],
         }),
         getDoctorPermissions: builder.query({
-            async queryFn({ address }) {
+            async queryFn(address) {
                 const data = await getDoctorPermissions(address);
-
                 if (Array.isArray(data) && data.length === 0) {
                     return { data: [] }
                 }
@@ -54,6 +60,7 @@ export const permissionsApi = createApi({
 
 export const {
     useCreatePermissionMutation,
+    useRequestPermissionMutation,
     useGetPatientPermissionsQuery,
     useGetDoctorPermissionsQuery,
     useDeletePermissionMutation,

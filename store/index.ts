@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userRoleReducer from "@/store/userRoleSlice";
+import notificationReducer from "@/store/notificationsSlice";
 import { usersApi } from "@/services/apis/user";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { permissionsApi } from "@/services/apis/permission";
@@ -13,6 +14,7 @@ export const store = configureStore({
         [vaccinesApi.reducerPath]: vaccinesApi.reducer,
         [medicationsApi.reducerPath]: medicationsApi.reducer,
         userRole: userRoleReducer,
+        notifications: notificationReducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware()

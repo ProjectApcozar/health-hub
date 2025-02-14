@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, TextInput, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card, Text, Button, Portal, Modal } from 'react-native-paper';
@@ -6,7 +6,10 @@ import { CommonHeader } from '@/components/CommonHeader';
 import { useAccount } from 'wagmi';
 import { PermissionsList } from '@/components/PermissionsList';
 import { useGetUserByAddressQuery } from '@/services/apis/user';
-import { useCreatePermissionMutation } from '@/services/apis/permission';
+import { useCreatePermissionMutation, useGetPatientPermissionsQuery } from '@/services/apis/permission';
+import { publicClient } from '@/utils/wagmi';
+import { contractAddress } from '@/constants/ContractAddress';
+import { dataintegrityABI } from '@/abis/DataIntergrityABI';
 
 const { width, height } = Dimensions.get('window');
 
@@ -16,6 +19,9 @@ export default function PatientPermissions() {
   const [modalVisible, setModalVisible] = useState(false);
   const [createPermission] = useCreatePermissionMutation();
   const { data: user } = useGetUserByAddressQuery(address!);
+  const { data: doctors, refetch } = useGetPatientPermissionsQuery(address!);
+  
+  if (!address) return null;
 
   const handleSumbit = async (doctor: string) => {
     if (!address) return;
@@ -23,6 +29,34 @@ export default function PatientPermissions() {
     await createPermission({address, permission: {patientId: address, doctorId: doctor}});
     setModalVisible(false);
   };
+
+      useEffect(() => {
+        const unwatch1 = publicClient.watchContractEvent({
+          address: contractAddress,
+          abi: dataintegrityABI,
+          eventName: "AccessGranted",
+          onLogs: (logs) => {
+            refetch();
+          },
+          onError: (errors) => console.error("Error al recibir logs:", errors),
+        });
+  
+        const unwatch2 = publicClient.watchContractEvent({
+          address: contractAddress,
+          abi: dataintegrityABI,
+          eventName: "AccessRevoked",
+          onLogs: (logs) => {
+            console.log(logs);
+            refetch();
+          },
+          onError: (errors) => console.error("Error al recibir logs:", errors),
+        });
+    
+        return () => {
+          unwatch1();
+          unwatch2();
+        }
+      }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -41,7 +75,7 @@ export default function PatientPermissions() {
         >
           Añadir Doctores
         </Button>
-        <PermissionsList />
+        <PermissionsList doctors={doctors}/>
         <Portal>
           <Modal
             visible={modalVisible}
