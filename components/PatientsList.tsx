@@ -21,7 +21,7 @@ interface PatientsListProps {
 export const PatientsList = ({ patients, shouldRedirect }: PatientsListProps) => {
   const { address } = useAccount();
   const [isDialogVisible, setIsDialogVisible] = useState(false);
-  const [selectedDoctor, setSelectedDoctor] = useState<any>(null); // Para almacenar el doctor seleccionado
+  const [selectedDoctor, setSelectedDoctor] = useState<any>(null);
   const [ deletePermission ] = useDeletePermissionMutation();
 
   if (!address) return null;

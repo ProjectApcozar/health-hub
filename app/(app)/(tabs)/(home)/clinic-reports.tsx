@@ -7,15 +7,17 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Card, Text, Button } from "react-native-paper";
 import { CommonHeader } from "@/components/CommonHeader";
-import { useAccount } from "wagmi";
 import { MedicationForm } from "@/components/Medication/MedicationForm";
 import { useGetUserByAddressQuery } from "@/services/apis/user";
 import { MedicationList } from "@/components/Medication/MedicationList";
+import { useLocalSearchParams } from "expo-router";
 
 const { width, height } = Dimensions.get("window");
 
 export default function Medication() {
-  const { address } = useAccount();
+  const { patientId: workingAddress } = useLocalSearchParams();
+  const address = Array.isArray(workingAddress) ? workingAddress[0] : workingAddress;
+
   if (!address) return null;
 
   const { data: user } = useGetUserByAddressQuery(address);

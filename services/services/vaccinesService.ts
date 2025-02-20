@@ -1,13 +1,22 @@
 import { Vaccine } from "@/common/types";
 import { encryptData } from "@/utils/crypto";
-import { getStoredKey } from "@/utils/secureStore";
+import { getDoctorKey, getStoredKey } from "@/utils/secureStore";
 
 const baseURL = process.env.EXPO_PUBLIC_API_URL as string;
 const URL = `${baseURL}/vaccines`;
 
 export const createVaccine = async (vaccine: Partial<Vaccine>, address: string) => {
     try {
-        const aesKey = await getStoredKey();
+        
+        let aesKey;
+
+        const encryptionKey = await getDoctorKey(address);
+        
+        if (encryptionKey){
+            aesKey = encryptionKey;
+        } else {
+            aesKey = await getStoredKey();
+        }
 
         if (!aesKey) {
             throw new Error(`No existe aesKey: ${aesKey}`);

@@ -1,13 +1,9 @@
 import { Permission } from "@/common/types";
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { createPermission, getDoctorPermissions } from "../services/permissionService";
+import { deleteItemAsync, getItemAsync, setItemAsync } from "expo-secure-store";
 
 const baseUrl = process.env.EXPO_PUBLIC_API_URL as string;
-
-interface PermissionRequest {
-    address: string;
-    password: string;
-};
 
 export const permissionsApi = createApi({
     reducerPath: "permissionsApi",
@@ -38,10 +34,15 @@ export const permissionsApi = createApi({
         getDoctorPermissions: builder.query({
             async queryFn(address) {
                 const data = await getDoctorPermissions(address);
+                await deleteItemAsync("doctorKeys");
                 if (Array.isArray(data) && data.length === 0) {
                     return { data: [] }
                 }
-
+                const doctorKeys: { [key: string]: string } = {};
+                for (const entry of data) {
+                    doctorKeys[entry.patientId] = entry.doctorDecryptedCipherKey;
+                }
+                await setItemAsync("doctorKeys", JSON.stringify(doctorKeys));
                 return { data };
             },
             providesTags: (address) => [{ type: "Permission", address }],

@@ -10,6 +10,7 @@ import { PatientsList } from '@/components/PatientsList';
 import { publicClient } from '@/utils/wagmi';
 import { contractAddress } from '@/constants/ContractAddress';
 import { dataintegrityABI } from '@/abis/DataIntergrityABI';
+import { getItemAsync } from 'expo-secure-store';
 
 const { width, height } = Dimensions.get('window');
 

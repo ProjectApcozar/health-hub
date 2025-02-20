@@ -2,6 +2,7 @@ import { decryptData } from '@/utils/crypto';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { registerDoctor, registerUser, updateUser } from '../services/userService';
 import { Doctor, User } from '@/common/types';
+import { getDoctorKey } from '@/utils/secureStore';
 
 const baseUrl = process.env.EXPO_PUBLIC_API_URL as string;
 // https://redux-toolkit.js.org/rtk-query/usage/queries
@@ -32,8 +33,14 @@ export const usersApi = createApi({
         // READ
         getUserByAddress: builder.query<User, string>({
             query: (address) => `users/${address}`,
-            transformResponse: async (response: any) => {
-                return await decryptData(response);
+            transformResponse: async (response: any, _meta, address) => {
+                const encryptionKey = await getDoctorKey(address);
+                if (encryptionKey){
+                    return await decryptData(response, encryptionKey);
+                } else {
+                    return await decryptData(response);
+                }
+
             },
             providesTags: (address) => [{ type: 'User', address }],
         }),
