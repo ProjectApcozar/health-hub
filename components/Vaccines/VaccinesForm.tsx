@@ -9,7 +9,7 @@ import {
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Vaccine } from "@/common/types";
 import { useCreateVaccineMutation } from "@/services/apis/vaccine";
-import { useAccount } from "wagmi";
+import { useLocalSearchParams } from "expo-router";
 
 export const VaccinesForm = ({
   visible,
@@ -25,8 +25,9 @@ export const VaccinesForm = ({
     formState: { errors },
   } = useForm<Vaccine>();
   const [createVaccine] = useCreateVaccineMutation();
-  const { address } = useAccount();
-
+  const { patientId: workingAddress } = useLocalSearchParams();
+  const address = Array.isArray(workingAddress) ? workingAddress[0] : workingAddress;
+  
   const onSubmit: SubmitHandler<Vaccine> = async (vaccine) => {
     if (!address) return;
     await createVaccine({ 

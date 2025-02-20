@@ -10,6 +10,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Medication } from "@/common/types";
 import { useCreateMedicationMutation } from "@/services/apis/medication";
 import { useAccount } from "wagmi";
+import { useLocalSearchParams } from "expo-router";
 
 export const MedicationForm = ({
   visible,
@@ -25,7 +26,8 @@ export const MedicationForm = ({
     formState: { errors },
   } = useForm<Medication>();
   const [createMedication] = useCreateMedicationMutation();
-  const { address } = useAccount();
+  const { patientId: workingAddress } = useLocalSearchParams();
+  const address = Array.isArray(workingAddress) ? workingAddress[0] : workingAddress;
 
   const onSubmit: SubmitHandler<Medication> = async (medication) => {
     console.log("Datos del medicamento:", medication);

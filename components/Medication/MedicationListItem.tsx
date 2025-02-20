@@ -37,7 +37,7 @@ export const MedicationListItem = ({ item, onPress, animation }: MedicationListI
           {item.category ? (
             <Text style={styles.itemSubtitle}>{item.category}</Text>
           ) : (
-            <Text style={styles.itemSubtitle}>{`${item.startDate} - ${item.duration} days`}</Text>
+            <Text style={styles.itemSubtitle}>{`${item.startDate} - ${item.duration}`}</Text>
           )}
         </View>
       </Animated.View>

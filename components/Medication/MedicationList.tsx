@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 import { Animated, StyleSheet, Dimensions, View } from 'react-native';
 import { Card, Text } from 'react-native-paper';
 import { MedicationFloatingModal } from './MedicationFloatingModal';
-import { useAccount } from 'wagmi';
 import { useGetMedicationsByAddressQuery } from '@/services/apis/medication';
 import { MedicationListItem } from './MedicationListItem';
+import { useLocalSearchParams } from 'expo-router';
 
 const { height } = Dimensions.get('window');
 
@@ -29,7 +29,8 @@ const styles = StyleSheet.create({
 });
 
 export const MedicationList = () => {
-  const { address } = useAccount();
+  const { patientId: workingAddress } = useLocalSearchParams();
+  const address = Array.isArray(workingAddress) ? workingAddress[0] : workingAddress;
   const [isModalVisible, setModalVisible] = useState(false);
   const { data: medications } = useGetMedicationsByAddressQuery(address!);
 

@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { Animated, StyleSheet, Dimensions, View } from "react-native";
 import { Avatar, Card, Text, TouchableRipple } from "react-native-paper";
 import { VaccineFloatingModal } from "./VaccineFloatingModal"; // Importar el modal
-import { useAccount } from "wagmi";
 import { useGetVaccinesByAddressQuery } from "@/services/apis/vaccine";
+import { useLocalSearchParams } from "expo-router";
 
 const { height } = Dimensions.get("window");
 
 export const VaccinesList = () => {
-  const { address } = useAccount();
+  const { patientId: workingAddress } = useLocalSearchParams();
+  const address = Array.isArray(workingAddress) ? workingAddress[0] : workingAddress;
   const [isModalVisible, setModalVisible] = useState(false);
   const { data: vaccines } = useGetVaccinesByAddressQuery(address!);
 

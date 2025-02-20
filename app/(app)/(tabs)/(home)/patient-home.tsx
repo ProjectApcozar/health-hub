@@ -27,14 +27,14 @@ export default function PatientHome() {
   const { address } = useAccount();
   const { patientId } = useLocalSearchParams();
   const router = useRouter();
-  const workingAddress = Array.isArray(patientId) ? patientId[0] : patientId || address;
+  const isFromDoctor = typeof patientId === "string" && patientId.trim().length > 0;
+  const workingAddress = isFromDoctor && Array.isArray(patientId) ? patientId[0] : patientId || address;
   if (!workingAddress) return null;
+  const dispatch = useDispatch();
 
   const {
     data: user
   } = useGetUserByAddressQuery(workingAddress);
-  console.log(user);
-  const dispatch = useDispatch();
   useEffect(() => {
     const unwatch = publicClient.watchContractEvent({
       address: contractAddress,
@@ -44,24 +44,27 @@ export default function PatientHome() {
         let nicelog: any = logs[0];
         console.log("Nuevo log recibido:", nicelog.args.doctor);
         let doctor = nicelog.args.doctor;
-        dispatch(addLog(doctor)); // Guarda los logs en Redux
+        dispatch(addLog(doctor));
       },
       onError: (errors) => console.error("Error al recibir logs:", errors),
     });
 
-    return () => unwatch(); // Detener la suscripción cuando se desmonte el componente
+    return () => unwatch();
   }, [dispatch]);
 
   const radius = Math.min(width, height) * 0.3;
   const angles = [30, 90, 150, 210, 270, 330];
+  const encodedAddress = encodeURIComponent(workingAddress);
+
   const items = [
-    { label: "Pruebas Analíticas", href: "/analytic-reports" as const },
-    { label: "Pruebas de Imagen", href: "/image-reports" as const },
-    { label: "Vacunas", href: "/vaccines"  as const },
-    { label: "Incapacidad Temporal", href: "/temporary-incapacity" as const },
-    { label: "Medicación", href: "/medication" as const },
-    { label: "Informes Clínicos", href: "/clinic-reports" as const },
+    { label: "Pruebas Analíticas", href: `/analytic-reports?patientId=${encodedAddress}` as const },
+    { label: "Pruebas de Imagen", href: `/image-reports?patientId=${encodedAddress}` as const },
+    { label: "Vacunas", href: `/vaccines?patientId=${encodedAddress}` as const },
+    { label: "Incapacidad Temporal", href: `/temporary-incapacity?patientId=${encodedAddress}` as const },
+    { label: "Medicación", href: `/medication?patientId=${encodedAddress}` as const },
+    { label: "Informes Clínicos", href: `/clinic-reports?patientId=${encodedAddress}` as const },
   ];
+  
 
   const menuPositions = angles.map((angle) => {
     const rad = (angle * Math.PI) / 180;
@@ -95,7 +98,7 @@ export default function PatientHome() {
         })}
         <TouchableOpacity 
           style={styles.centerButton}
-          onPress={() => router.push("/basic-data")}>
+          onPress={() => router.push(`/basic-data?patientId=${encodedAddress}`)}>
           <Text style={styles.centerText}>Datos Médicos</Text>
         </TouchableOpacity>
       </View>
