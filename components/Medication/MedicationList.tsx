@@ -1,4 +1,3 @@
-// MedicationList.tsx
 import React, { useState } from 'react';
 import { Animated, StyleSheet, Dimensions, View } from 'react-native';
 import { Card, Text } from 'react-native-paper';

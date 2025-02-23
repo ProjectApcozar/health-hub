@@ -2,27 +2,40 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Link } from "expo-router";
 import { Avatar, IconButton, Badge } from "react-native-paper";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store/index";
 import { NotificationsFloatingModal } from "./NotificationsFloatingModal";
+import { markAsRead } from "@/store/notificationsSlice";
 
 export const CommonHeader = ({ userName = "Usuario" }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const doctorLogs = useSelector((state: RootState) => state.notifications.logs);
-  const hasNotifications = doctorLogs.length > 0;
+  const unread = useSelector((state: RootState) => state.notifications.unread);
+  const dispatch = useDispatch();
+
+  const handlePress = () => {
+    setModalVisible(true);
+    dispatch(markAsRead());
+  }
+
+  const getInitials = (name: string) => {
+    return name
+      .split(" ") // Divide el nombre en palabras
+      .map((word) => word.charAt(0).toUpperCase()) // Toma la primera letra de cada palabra en mayúscula
+      .join(""); // Une las iniciales
+  };
 
   return (
     <>
       <View style={styles.header}>
         <Link href="/profile" asChild>
           <TouchableOpacity>
-            <Avatar.Text size={40} label="AP" style={styles.profileButton} labelStyle={styles.profileText} />
+            <Avatar.Text size={40} label={getInitials(userName)} style={styles.profileButton} labelStyle={styles.profileText} />
           </TouchableOpacity>
         </Link>
         <Text style={styles.greetingText}>{`Hola ${userName}`}</Text>
-        <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.notificationContainer}>
+        <TouchableOpacity onPress={handlePress} style={styles.notificationContainer}>
           <IconButton icon={"bell-outline"} style={styles.notificationButton} />
-          {hasNotifications && (
+          {unread && (
             <View style={styles.badgeContainer}>
               <Badge style={styles.badge} size={10} />
             </View>
