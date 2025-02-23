@@ -17,9 +17,7 @@ import { CommonHeader } from "@/components/CommonHeader";
 import { useGetUserByAddressQuery } from "@/services/apis/user";
 import { contractAddress } from "@/constants/ContractAddress";
 import { dataintegrityABI } from "@/abis/DataIntergrityABI";
-import { publicClient } from "@/utils/wagmi";
-import { useDispatch } from "react-redux";
-import { addLog } from "@/store/notificationsSlice";
+import { useWatchEvents } from "@/hooks/useWatchEvents";
 
 const { width, height } = Dimensions.get("window");
 
@@ -30,27 +28,11 @@ export default function PatientHome() {
   const isFromDoctor = typeof patientId === "string" && patientId.trim().length > 0;
   const workingAddress = isFromDoctor && Array.isArray(patientId) ? patientId[0] : patientId || address;
   if (!workingAddress) return null;
-  const dispatch = useDispatch();
-
   const {
     data: user
   } = useGetUserByAddressQuery(workingAddress);
-  useEffect(() => {
-    const unwatch = publicClient.watchContractEvent({
-      address: contractAddress,
-      abi: dataintegrityABI,
-      eventName: "AccessRequested",
-      onLogs: (logs) => {
-        let nicelog: any = logs[0];
-        console.log("Nuevo log recibido:", nicelog.args.doctor);
-        let doctor = nicelog.args.doctor;
-        dispatch(addLog(doctor));
-      },
-      onError: (errors) => console.error("Error al recibir logs:", errors),
-    });
-
-    return () => unwatch();
-  }, [dispatch]);
+  
+  useWatchEvents(contractAddress, dataintegrityABI);
 
   const radius = Math.min(width, height) * 0.3;
   const angles = [30, 90, 150, 210, 270, 330];
@@ -76,7 +58,7 @@ export default function PatientHome() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <CommonHeader userName={user?.name} />
+      <CommonHeader userName={user?.name} isDoctor={isFromDoctor}/>
       <View style={styles.menuContainer}>
         {items.map((item, index) => {
           const animatedStyle = useAnimatedStyle(() => ({

@@ -10,6 +10,7 @@ import { publicClient } from '@/utils/wagmi';
 import { contractAddress } from '@/constants/ContractAddress';
 import { dataintegrityABI } from '@/abis/DataIntergrityABI';
 import { PatientsList } from '@/components/PatientsList';
+import { useWatchEvents } from '@/hooks/useWatchEvents';
 
 const { width, height } = Dimensions.get('window');
 
@@ -27,36 +28,8 @@ export default function DoctorPermissions() {
     await createPermission({address, permission: {patientId: patient, doctorId: address }});
     setModalVisible(false);
   };
-      useEffect(() => {
-        const unwatch1 = publicClient.watchContractEvent({
-          address: contractAddress,
-          abi: dataintegrityABI,
-          eventName: "AccessGranted",
-          onLogs: (logs) => {
-            let nicelog: any = logs[0];
-            console.log("Nuevo log recibido:", nicelog.args.doctor);
-            refetch();
-          },
-          onError: (errors) => console.error("Error al recibir logs:", errors),
-        });
-  
-        const unwatch2 = publicClient.watchContractEvent({
-          address: contractAddress,
-          abi: dataintegrityABI,
-          eventName: "AccessRevoked",
-          onLogs: (logs) => {
-            let nicelog: any = logs[0];
-            console.log("Nuevo log recibido:", nicelog.args.doctor);
-            refetch();
-          },
-          onError: (errors) => console.error("Error al recibir logs:", errors),
-        });
-    
-        return () => {
-          unwatch1();
-          unwatch2();
-        }
-      }, []);
+  useWatchEvents(contractAddress, dataintegrityABI, refetch);
+
 
   return (
     <SafeAreaView style={styles.container}>

@@ -7,11 +7,11 @@ import { RootState } from "@/store/index";
 import { NotificationsFloatingModal } from "./NotificationsFloatingModal";
 import { markAsRead } from "@/store/notificationsSlice";
 
-export const CommonHeader = ({ userName = "Usuario" }) => {
+export const CommonHeader = ({ userName = "Usuario", isDoctor = false }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const unread = useSelector((state: RootState) => state.notifications.unread);
   const dispatch = useDispatch();
-
+  const shouldShowNotifications = !isDoctor && unread;
   const handlePress = () => {
     setModalVisible(true);
     dispatch(markAsRead());
@@ -35,14 +35,14 @@ export const CommonHeader = ({ userName = "Usuario" }) => {
         <Text style={styles.greetingText}>{`Hola ${userName}`}</Text>
         <TouchableOpacity onPress={handlePress} style={styles.notificationContainer}>
           <IconButton icon={"bell-outline"} style={styles.notificationButton} />
-          {unread && (
+          {shouldShowNotifications && (
             <View style={styles.badgeContainer}>
               <Badge style={styles.badge} size={10} />
             </View>
           )}
         </TouchableOpacity>
       </View>
-      <NotificationsFloatingModal visible={modalVisible} onClose={() => setModalVisible(false)} />
+      <NotificationsFloatingModal visible={modalVisible && !isDoctor} onClose={() => setModalVisible(false)} />
     </>
   );
 };
