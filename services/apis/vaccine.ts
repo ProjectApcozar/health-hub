@@ -2,6 +2,7 @@ import { Vaccine } from "@/common/types";
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { createVaccine } from "../services/vaccinesService";
 import { decryptData } from "@/utils/crypto";
+import { getDoctorKey } from "@/utils/secureStore";
 
 const baseUrl = process.env.EXPO_PUBLIC_API_URL as string;
 
@@ -23,10 +24,18 @@ export const vaccinesApi = createApi({
         // READ
         getVaccinesByAddress: builder.query<Vaccine[], string>({
             query: (address) => `vaccines/${address}`,
-            transformResponse: async (response: any) => {
+            transformResponse: async (response: any, _meta, address) => {
                 const decryptedData = [];
+                const encryptionKey = await getDoctorKey(address);
+               
                 for (const item of response) {
-                    const decryptedItem = await decryptData(item);
+                    let decryptedItem;
+                    if (encryptionKey) {
+                        decryptedItem = await decryptData(item, encryptionKey);
+                    } else {
+                        decryptedItem = await decryptData(item);
+                    }
+                    
                     decryptedData.push(decryptedItem);
                 }
                 return decryptedData; 
