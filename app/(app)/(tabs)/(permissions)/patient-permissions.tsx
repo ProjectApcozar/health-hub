@@ -10,6 +10,7 @@ import { useCreatePermissionMutation, useGetPatientPermissionsQuery } from '@/se
 import { publicClient } from '@/utils/wagmi';
 import { contractAddress } from '@/constants/ContractAddress';
 import { dataintegrityABI } from '@/abis/DataIntergrityABI';
+import { useWatchEvents } from '@/hooks/useWatchEvents';
 
 const { width, height } = Dimensions.get('window');
 
@@ -30,33 +31,7 @@ export default function PatientPermissions() {
     setModalVisible(false);
   };
 
-      useEffect(() => {
-        const unwatch1 = publicClient.watchContractEvent({
-          address: contractAddress,
-          abi: dataintegrityABI,
-          eventName: "AccessGranted",
-          onLogs: (logs) => {
-            refetch();
-          },
-          onError: (errors) => console.error("Error al recibir logs:", errors),
-        });
-  
-        const unwatch2 = publicClient.watchContractEvent({
-          address: contractAddress,
-          abi: dataintegrityABI,
-          eventName: "AccessRevoked",
-          onLogs: (logs) => {
-            console.log(logs);
-            refetch();
-          },
-          onError: (errors) => console.error("Error al recibir logs:", errors),
-        });
-    
-        return () => {
-          unwatch1();
-          unwatch2();
-        }
-      }, []);
+  useWatchEvents(contractAddress, dataintegrityABI, refetch);
 
   return (
     <SafeAreaView style={styles.container}>

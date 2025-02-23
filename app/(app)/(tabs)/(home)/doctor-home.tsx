@@ -7,10 +7,9 @@ import { useAccount } from 'wagmi';
 import { useGetDoctorByAddressQuery } from '@/services/apis/user';
 import { useGetDoctorPermissionsQuery, useRequestPermissionMutation } from '@/services/apis/permission';
 import { PatientsList } from '@/components/PatientsList';
-import { publicClient } from '@/utils/wagmi';
 import { contractAddress } from '@/constants/ContractAddress';
 import { dataintegrityABI } from '@/abis/DataIntergrityABI';
-import { getItemAsync } from 'expo-secure-store';
+import { useWatchEvents } from '@/hooks/useWatchEvents';
 
 const { width, height } = Dimensions.get('window');
 
@@ -29,40 +28,11 @@ export default function DoctorHome() {
     setModalVisible(false);
   };
 
-    useEffect(() => {
-      const unwatch1 = publicClient.watchContractEvent({
-        address: contractAddress,
-        abi: dataintegrityABI,
-        eventName: "AccessGranted",
-        onLogs: (logs) => {
-          let nicelog: any = logs[0];
-          console.log("Nuevo log recibido:", nicelog.args.doctor);
-          refetch();
-        },
-        onError: (errors) => console.error("Error al recibir logs:", errors),
-      });
-
-      const unwatch2 = publicClient.watchContractEvent({
-        address: contractAddress,
-        abi: dataintegrityABI,
-        eventName: "AccessRevoked",
-        onLogs: (logs) => {
-          let nicelog: any = logs[0];
-          console.log("Nuevo log recibido:", nicelog.args.doctor);          
-          refetch();
-        },
-        onError: (errors) => console.error("Error al recibir logs:", errors),
-      });
-  
-      return () => {
-        unwatch1();
-        unwatch2();
-      }
-    }, []);
+  useWatchEvents(contractAddress, dataintegrityABI, refetch);
 
   return (
     <SafeAreaView style={styles.container}>
-      <CommonHeader userName={user?.name} />
+      <CommonHeader userName={user?.name} isDoctor={true}/>
       <View style={styles.content}>
         <Card style={styles.primaryCard}>
           <Card.Content>
